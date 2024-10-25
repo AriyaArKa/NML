@@ -1,7 +1,7 @@
 # NML-ASSIGNMENT
 
 
-<title>Gaussian and Gauss-Jordan Elimination Methods</title>
+<h1>Gaussian and Gauss-Jordan Elimination Methods</h1>
 </head>
 <body>
 
