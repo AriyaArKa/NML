@@ -1,132 +1,268 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-/*
+int maxIteration = 1000;
+double tolerance = 1e-6;
 
-void newton_raphson(vector<double> coef, double tolerance = 0.0001){
-    int iteration = 0;
-    double x = 0.0;
-    while (true)
-    {
-        iteration++;
-        double f_x = f(coef, x);
-        double f_prime_x = fprime(coef, x);
-        // Newton-Raphson update formula
-        double x_new = x - f_x / f_prime_x;
+// Jacobi Method Function
+vector<double> jacobiMethod(const vector<vector<double>>& A, const vector<double>& b, const vector<double>& initialGuess = {}) {
+    int n = b.size();
+    vector<double> xOld(n, 0.0);
+    if (!initialGuess.empty()) {
+        xOld = initialGuess;
+    }
+    vector<double> xNew(n, 0.0);
+    vector<double> errors(n, 0.0);
 
-        if(fabs(x_new - x) <= tolerance || fabs(f_x) <= tolerance){
-            cout << "[+] - Found Root : " << x_new << endl;
-            cout << "[+] - Iteration Required : " << iteration << endl;
-            return;
+    for (int iter = 0; iter < maxIteration; ++iter) {
+        for (int i = 0; i < n; ++i) {
+            double sigma = 0.0;
+            for (int j = 0; j < n; ++j) {
+                if (j != i) {
+                    sigma += A[i][j] * xOld[j];
+                }
+            }
+            if (fabs(A[i][i]) < 1e-12) {
+                cerr << "Zero diagonal element encountered at row " << i + 1 << endl;
+                return {};
+            }
+            xNew[i] = (b[i] - sigma) / A[i][i];
+            errors[i] = fabs(xNew[i] - xOld[i]);
         }
 
-        x = x_new;
-    }
+        // Check for convergence
+        double maxError = *max_element(errors.begin(), errors.end());
+        if (maxError < tolerance) {
+            cout << "Jacobi method converged in " << iter + 1 << " iterations." << endl;
+            return xNew;
+        }
+        xOld = xNew;
+    }
+
+    cout << "Jacobi method did not converge within the maximum number of iterations." << endl;
+    return xNew;
 }
 
-double f(vector<double>& vec, double x){
-    double sum = 0;
-    for(int i = 0; i<vec.size(); i++){
-        sum += vec[i] * pow(x, vec.size()-i-1);
+/*
+
+4 1 -1 3
+1 5 1 7
+2 1 6 10
+
+Jacobi Method Solution:
+x[1] = 0.809917
+x[2] = 0.991735
+x[3] = 1.231405
+
+*/
+
+// Testing the Jacobi Method
+
+void takeInputforLinear() {
+    int n;
+    cout << "Enter the number of equations: ";
+    cin >> n;
+
+    vector<vector<double>> augmentedMatrix(n, vector<double>(n + 1));
+
+    // Display augmented matrix format
+    cout << "\nThe augmented matrix format is as follows (each row has " << n + 1 << " coefficients):" << endl;
+    for (int i = 1; i <= n; ++i) {
+        cout << "|";
+        for (int j = 1; j <= n; ++j) {
+            cout << " a" << i << j;
+        }
+        cout << " | b" << i << " |" << endl;
+    }
+    cout << "\nEnter the augmented matrix coefficients:" << endl;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n + 1; ++j) {
+            cin >> augmentedMatrix[i][j];
+        }
+    }
+
+    vector<vector<double>> A(n, vector<double>(n));
+    vector<double> b(n);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            A[i][j] = augmentedMatrix[i][j];
+        }
+        b[i] = augmentedMatrix[i][n];
+    }
+
+    vector<double> initialGuess(n, 0.0);
+    vector<double> jacobiSolution = jacobiMethod(A, b, initialGuess);
+    cout << "\nJacobi Method Solution:" << endl;
+    for (size_t i = 0; i < jacobiSolution.size(); ++i) {
+        cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << jacobiSolution[i] << endl;
+    }
+}
+
+// Function to evaluate polynomial at a given x
+double f(const vector<double>& coef, double x) {1
+
+    double sum = 0.0;
+    int n = coef.size();
+    for (int i = 0; i < n; ++i) {
+        sum += coef[i] * pow(x, n - i - 1);
     }
     return sum;
 }
 
+// Function to evaluate derivative of polynomial at a given x
+double fPrime(const vector<double>& coef, double x) {
+    double sum = 0.0;
+    int n = coef.size();
+    for (int i = 0; i < n - 1; ++i) {
+        sum += (n - i - 1) * coef[i] * pow(x, n - i - 2);
+    }
+    return sum;
+}
 
-void biSection(vector<double>& vec, int max_iter, double tolerance, double a, double b) {
-    cout << endl << "BiSection Method:" << endl;
-    int n = vec.size();
+// Newton-Raphson method
+vector<double> newtonRaphson(const vector<double>& coef, double tolerance = 0.0001) {
+    int iteration = 0;
+    double x = 0.0;
+    vector<double> root(1);
 
-    if(f(vec, a) * f(vec, b) >= 0){
-        cout << "Invalid a, b" << endl;
-        return;
+    while (true) {
+        iteration++;
+        double f_x = f(coef, x);
+        double f_prime_x = fPrime(coef, x);
+
+        if (fabs(f_prime_x) < 1e-12) {
+            cout << "Derivative too small, stopping iteration." << endl;
+            return {};
+        }
+
+        double xNew = x - f_x / f_prime_x;
+
+        if (fabs(xNew - x) <= tolerance || fabs(f_x) <= tolerance) {
+            cout << "[+] Found Root: " << xNew << endl;
+            cout << "[+] Iterations Required: " << iteration << endl;
+            root[0] = xNew;
+            return root;
+        }
+
+        x = xNew;
+    }
+}
+
+// Bisection method
+vector<double> biSection(const vector<double>& coef, int maxIter, double tolerance, double a, double b) {
+    cout << endl << "Bisection Method:" << endl;
+    vector<double> root(1);
+
+    if (f(coef, a) * f(coef, b) >= 0) {
+        cout << "Invalid interval [a, b]." << endl;
+        return {};
     }
 
     double c, f_c;
-    
-    for (int iter = 0; iter < max_iter; ++iter) {
-        c = (a+b) / 2;
+    for (int iter = 0; iter < maxIter; ++iter) {
+        c = (a + b) / 2.0;
+        f_c = f(coef, c);
 
-        f_c = f(vec, c);
-
-        if(fabs(f_c) <= tolerance){
-            cout << "Found Root : " << c << endl;
-            break;
+        if (fabs(f_c) <= tolerance) {
+            cout << "Found Root: " << c << endl;
+            root[0] = c;
+            return root;
         }
 
-        if(f(vec, a) * f_c < 0){
+        if (f(coef, a) * f_c < 0) {
             b = c;
-        }else{
+        } else {
             a = c;
         }
 
-        cout << c << endl;
-        
+        cout << "Iteration " << iter + 1 << ": c = " << c << endl;
     }
 
     cout << "Max iterations reached without convergence." << endl;
+    return {};
 }
 
-int main() {
-    vector<double> vec = {1, 0, -1, -2};
-    int max_iter = 15;
-    double tolerance = 1e-5;
+// Gauss Elimination method
+vector<double> gaussElimination(vector<vector<double>> matrix) {
+    int n = matrix.size();
 
-    biSection(vec, max_iter, tolerance, 1, 5);
+    // Forward elimination
+    for (int j = 0; j < n - 1; ++j) {
+        // Partial pivoting
+        int maxRow = j;
+        for (int i = j + 1; i < n; ++i) {
+            if (fabs(matrix[i][j]) > fabs(matrix[maxRow][j])) {
+                maxRow = i;
+            }
+        }
+        swap(matrix[j], matrix[maxRow]);
 
-    return 0;
-}*/
-
-int n;
-int a[1000][1000];
-void gauss_elimination()
-{
-    for(int j=1;j<n;j++)
-    {
-        for(int i=n;i>j;i--)
-        {
-            if(a[i][j]==0) continue;
-            int lcm=a[j][j]*a[i][j]/__gcd(a[j][j],a[i][j]);
-            int up=lcm/a[j][j], nic=lcm/a[i][j];
-            for(int k=1;k<=n+1;k++) a[i][k]=up*a[j][k]-nic*a[i][k];
+        for (int i = j + 1; i < n; ++i) {
+            double factor = matrix[i][j] / matrix[j][j];
+            for (int k = j; k <= n; ++k) {
+                matrix[i][k] -= factor * matrix[j][k];
+            }
         }
     }
+
+    // Back substitution
+    vector<double> solution(n);
+    for (int i = n - 1; i >= 0; --i) {
+        solution[i] = matrix[i][n];
+        for (int j = i + 1; j < n; ++j) {
+            solution[i] -= matrix[i][j] * solution[j];
+        }
+        solution[i] /= matrix[i][i];
+    }
+
+    return solution;
 }
-void Jordan_elimination()
-{
-    for(int j=n;j>1;j--)
-    {
-        for(int i=1;i<j;i++)
-        {
-            if(a[i][j]==0) continue;
-            int lcm=a[j][j]*a[i][j]/__gcd(a[j][j],a[i][j]);
-            int nic=lcm/a[j][j],up=lcm/a[i][j];
-            for(int k=1;k<=n+1;k++) a[i][k]=nic*a[j][k]-up*a[i][k];
+
+// Gauss-Jordan Elimination method
+vector<double> gaussJordanElimination(vector<vector<double>> matrix) {
+    int n = matrix.size();
+
+    for (int j = 0; j < n; ++j) {
+        // Partial pivoting
+        int maxRow = j;
+        for (int i = j + 1; i < n; ++i) {
+            if (fabs(matrix[i][j]) > fabs(matrix[maxRow][j])) {
+                maxRow = i;
+            }
+        }
+        swap(matrix[j], matrix[maxRow]);
+
+        // Make pivot element 1
+        double pivot = matrix[j][j];
+        if (fabs(pivot) < 1e-12) {
+            cout << "Zero pivot encountered, no unique solution." << endl;
+            return {};
+        }
+        for (int k = j; k <= n; ++k) {
+            matrix[j][k] /= pivot;
+        }
+
+        // Eliminate other entries in column
+        for (int i = 0; i < n; ++i) {
+            if (i != j) {
+                double factor = matrix[i][j];
+                for (int k = j; k <= n; ++k) {
+                    matrix[i][k] -= factor * matrix[j][k];
+                }
+            }
         }
     }
-}
-void row_echelon()
-{
-    for(int i=1;i<=n;i++) a[i][n+1]/=a[i][i], a[i][i]=1;
-}
 
-/*
-int main()
-{
-    n=4;
-    for(int i=1;i<=n;i++)
-        for(int j=1;j<=n+1;j++) cin >> a[i][j];
-    gauss_elimination();
-    Jordan_elimination();
-    row_echelon();
-    cout << endl;
-    for(int i=1;i<=n;i++)
-    {
-        for(int j=1;j<=n+1;j++) cout << a[i][j] << ' ';
-        cout << endl;
+    // Extract solution
+    vector<double> solution(n);
+    for (int i = 0; i < n; ++i) {
+        solution[i] = matrix[i][n];
     }
 
-}*/
+    return solution;
+}
+
 void mainMenu() {
     cout << "******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
     cout << "Select a category:\n";
@@ -145,7 +281,7 @@ void linearMenu() {
     cout << "3. Gauss Elimination\n";
     cout << "4. Gauss-Jordan Elimination\n";
     cout << "5. LU Factorization\n";
-    cout << "0. Return to Main Menu\n";  // Press 0 to return to the main menu
+    cout << "0. Return to Main Menu\n";
     cout << "Enter your choice: ";
 }
 
@@ -155,21 +291,21 @@ void nonlinearMenu() {
     cout << "2. False Position Method\n";
     cout << "3. Secant Method\n";
     cout << "4. Newton-Raphson Method\n";
-    cout << "0. Return to Main Menu\n";  // Press 0 to return to the main menu
+    cout << "0. Return to Main Menu\n";
     cout << "Enter your choice: ";
 }
 
 void diffEqMenu() {
     cout << "Select a differential equation solving method:\n";
     cout << "1. Runge-Kutta Method (4th Order)\n";
-    cout << "0. Return to Main Menu\n";  // Press 0 to return to the main menu
+    cout << "0. Return to Main Menu\n";
     cout << "Enter your choice: ";
 }
 
 void matrixMenu() {
     cout << "Select a matrix operation method:\n";
     cout << "1. Matrix Inversion\n";
-    cout << "0. Return to Main Menu\n";  // Press 0 to return to the main menu
+    cout << "0. Return to Main Menu\n";
     cout << "Enter your choice: ";
 }
 
@@ -198,7 +334,7 @@ int main() {
 
         if (mainChoice == 0) {
             cout << "Exiting the program.\n";
-            break;  // Exit the program
+            break;
         }
 
         switch (mainChoice) {
@@ -206,7 +342,7 @@ int main() {
                 while (true) {
                     linearMenu();
                     cin >> methodChoice;
-                    if (methodChoice == 0) break;  // Return to main menu
+                    if (methodChoice == 0) break;
                     solveLinear(methodChoice);
                 }
                 break;
@@ -214,7 +350,7 @@ int main() {
                 while (true) {
                     nonlinearMenu();
                     cin >> methodChoice;
-                    if (methodChoice == 0) break;  // Return to main menu
+                    if (methodChoice == 0) break;
                     solveNonlinear(methodChoice);
                 }
                 break;
@@ -222,7 +358,7 @@ int main() {
                 while (true) {
                     diffEqMenu();
                     cin >> methodChoice;
-                    if (methodChoice == 0) break;  // Return to main menu
+                    if (methodChoice == 0) break;
                     solveDifferential(methodChoice);
                 }
                 break;
@@ -230,7 +366,7 @@ int main() {
                 while (true) {
                     matrixMenu();
                     cin >> methodChoice;
-                    if (methodChoice == 0) break;  // Return to main menu
+                    if (methodChoice == 0) break;
                     solveMatrix(methodChoice);
                 }
                 break;
