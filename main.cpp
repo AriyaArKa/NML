@@ -28,6 +28,10 @@ void Jordan_elimination()
         }
     }
 }
+void row_echelon()
+{
+    for(int i=1;i<=n;i++) a[i][n+1]/=a[i][i], a[i][i]=1;
+}
 void mainMenu() {
     cout << "******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
     cout << "Select a category:\n";
