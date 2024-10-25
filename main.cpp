@@ -1,111 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long int ll;
 
 int maxIteration = 1000;
 double tolerance = 1e-6;
 
-// Jacobi Method Function
-vector<double> jacobiMethod(const vector<vector<double>>& A, const vector<double>& b, const vector<double>& initialGuess = {}) {
-    int n = b.size();
-    vector<double> xOld(n, 0.0);
-    if (!initialGuess.empty()) {
-        xOld = initialGuess;
-    }
-    vector<double> xNew(n, 0.0);
-    vector<double> errors(n, 0.0);
-
-    for (int iter = 0; iter < maxIteration; ++iter) {
-        for (int i = 0; i < n; ++i) {
-            double sigma = 0.0;
-            for (int j = 0; j < n; ++j) {
-                if (j != i) {
-                    sigma += A[i][j] * xOld[j];
-                }
-            }
-            if (fabs(A[i][i]) < 1e-12) {
-                cerr << "Zero diagonal element encountered at row " << i + 1 << endl;
-                return {};
-            }
-            xNew[i] = (b[i] - sigma) / A[i][i];
-            errors[i] = fabs(xNew[i] - xOld[i]);
-        }
-
-        // Check for convergence
-        double maxError = *max_element(errors.begin(), errors.end());
-        if (maxError < tolerance) {
-            cout << "Jacobi method converged in " << iter + 1 << " iterations." << endl;
-            return xNew;
-        }
-        xOld = xNew;
-    }
-
-    cout << "Jacobi method did not converge within the maximum number of iterations." << endl;
-    return xNew;
-}
-
-/*
-
-4 1 -1 3
-1 5 1 7
-2 1 6 10
-
-Jacobi Method Solution:
-x[1] = 0.809917
-x[2] = 0.991735
-x[3] = 1.231405
-
-*/
-
-// Testing the Jacobi Method
-
-void takeInputforLinear() {
-    int n;
-    cout << "Enter the number of equations: ";
-    cin >> n;
-
-    vector<vector<double>> augmentedMatrix(n, vector<double>(n + 1));
-
-    // Display augmented matrix format
-    cout << "\nThe augmented matrix format is as follows (each row has " << n + 1 << " coefficients):" << endl;
-    for (int i = 1; i <= n; ++i) {
-        cout << "|";
-        for (int j = 1; j <= n; ++j) {
-            cout << " a" << i << j;
-        }
-        cout << " | b" << i << " |" << endl;
-    }
-    cout << "\nEnter the augmented matrix coefficients:" << endl;
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n + 1; ++j) {
-            cin >> augmentedMatrix[i][j];
-        }
-    }
-
-    vector<vector<double>> A(n, vector<double>(n));
-    vector<double> b(n);
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            A[i][j] = augmentedMatrix[i][j];
-        }
-        b[i] = augmentedMatrix[i][n];
-    }
-
-    vector<double> initialGuess(n, 0.0);
-    vector<double> jacobiSolution = jacobiMethod(A, b, initialGuess);
-    cout << "\nJacobi Method Solution:" << endl;
-    for (size_t i = 0; i < jacobiSolution.size(); ++i) {
-        cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << jacobiSolution[i] << endl;
-    }
-}
-
-// Function to evaluate polynomial at a given x
-double f(const vector<double>& coef, double x) {1
-
-=======
 // Function to evaluate polynomial at a given x
 double f(const vector<double>& coef, double x) {
->>>>>>> 2a884421707a8c0b4f91fe485fc90629c253efc6
     double sum = 0.0;
     int n = coef.size();
     for (int i = 0; i < n; ++i) {
@@ -125,7 +26,7 @@ double fPrime(const vector<double>& coef, double x) {
 }
 
 // Newton-Raphson method
-vector<double> newtonRaphson(const vector<double>& coef, double tolerance = 0.0001) {
+vector<double> newtonRaphson(const vector<double>& coef, double tolerance = 1e-6) {
     int iteration = 0;
     double x = 0.0;
     vector<double> root(1);
@@ -185,6 +86,110 @@ vector<double> biSection(const vector<double>& coef, int maxIter, double toleran
 
     cout << "Max iterations reached without convergence." << endl;
     return {};
+}
+
+// Placeholder for False Position Method
+vector<double> falsePosition(const vector<double>& coef, int maxIter, double tolerance, double a, double b) {
+    cout << "False Position Method is not yet implemented." << endl;
+    return {};
+}
+
+// Placeholder for Secant Method
+vector<double> secantMethod(const vector<double>& coef, int maxIter, double tolerance, double x0, double x1) {
+    cout << "Secant Method is not yet implemented." << endl;
+    return {};
+}
+
+// Jacobi Method Function
+vector<double> jacobiMethod(const vector<vector<double>>& A, const vector<double>& b, const vector<double>& initialGuess = {}) {
+    int n = b.size();
+    vector<double> xOld(n, 0.0);
+    if (!initialGuess.empty()) {
+        xOld = initialGuess;
+    }
+    vector<double> xNew(n, 0.0);
+    vector<double> errors(n, 0.0);
+
+    for (int iter = 0; iter < maxIteration; ++iter) {
+        for (int i = 0; i < n; ++i) {
+            double sigma = 0.0;
+            for (int j = 0; j < n; ++j) {
+                if (j != i) {
+                    sigma += A[i][j] * xOld[j];
+                }
+            }
+            if (fabs(A[i][i]) < 1e-12) {
+                cerr << "Zero diagonal element encountered at row " << i + 1 << endl;
+                return {};
+            }
+            xNew[i] = (b[i] - sigma) / A[i][i];
+            errors[i] = fabs(xNew[i] - xOld[i]);
+        }
+
+        // Check for convergence
+        double maxError = *max_element(errors.begin(), errors.end());
+        if (maxError < tolerance) {
+            cout << "Jacobi method converged in " << iter + 1 << " iterations." << endl;
+            return xNew;
+        }
+        xOld = xNew;
+    }
+
+    cout << "Jacobi method did not converge within the maximum number of iterations." << endl;
+    return xNew;
+}
+
+/*
+
+4 1 -1 3
+1 5 1 7
+2 1 6 10
+
+Jacobi Method Solution:
+x[1] = 0.809917
+x[2] = 0.991735
+x[3] = 1.231405
+
+*/
+
+// Gauss-Seidel Method Function
+vector<double> gaussSeidelMethod(const vector<vector<double>>& A, const vector<double>& b, const vector<double>& initialGuess = {}) {
+    int n = b.size();
+    vector<double> x(n, 0.0);
+    if (!initialGuess.empty()) {
+        x = initialGuess;
+    }
+    vector<double> xOld(n, 0.0);
+    vector<double> errors(n, 0.0);
+
+    for (int iter = 0; iter < maxIteration; ++iter) {
+        xOld = x;
+        for (int i = 0; i < n; ++i) {
+            double sigma = 0.0;
+            // Use the latest values of x for updating
+            for (int j = 0; j < n; ++j) {
+                if (j != i) {
+                    sigma += A[i][j] * x[j];
+                }
+            }
+            if (fabs(A[i][i]) < 1e-12) {
+                cerr << "Zero diagonal element encountered at row " << i + 1 << endl;
+                return {};
+            }
+            x[i] = (b[i] - sigma) / A[i][i];
+            errors[i] = fabs(x[i] - xOld[i]);
+        }
+
+        // Check for convergence
+        double maxError = *max_element(errors.begin(), errors.end());
+        if (maxError < tolerance) {
+            cout << "Gauss-Seidel method converged in " << iter + 1 << " iterations." << endl;
+            return x;
+        }
+    }
+
+    cout << "Gauss-Seidel method did not converge within the maximum number of iterations." << endl;
+    return x;
 }
 
 // Gauss Elimination method
@@ -267,8 +272,77 @@ vector<double> gaussJordanElimination(vector<vector<double>> matrix) {
     return solution;
 }
 
+// Placeholder for LU Factorization method
+vector<double> luFactorization(const vector<vector<double>>& A, const vector<double>& b) {
+    cout << "LU Factorization method is not yet implemented." << endl;
+    return {};
+}
+
+// Placeholder for Runge-Kutta Method (4th Order)
+void rungeKuttaMethod() {
+    cout << "Runge-Kutta Method (4th Order) is not yet implemented." << endl;
+}
+
+// Placeholder for Matrix Inversion
+void matrixInversion() {
+    cout << "Matrix Inversion method is not yet implemented." << endl;
+}
+
+// Function to take input for linear equations
+void takeInputForLinear(vector<vector<double>>& A, vector<double>& b) {
+    int n;
+    cout << "Enter the number of equations: ";
+    cin >> n;
+
+    A.resize(n, vector<double>(n));
+    b.resize(n);
+
+    vector<vector<double>> augmentedMatrix(n, vector<double>(n + 1));
+
+    // Display augmented matrix format
+    cout << "\nThe augmented matrix format is as follows (each row has " << n + 1 << " coefficients):" << endl;
+    for (int i = 1; i <= n; ++i) {
+        cout << "|";
+        for (int j = 1; j <= n; ++j) {
+            cout << " a" << i << j;
+        }
+        cout << " | b" << i << " |" << endl;
+    }
+    cout << "\nEnter the augmented matrix coefficients:" << endl;
+
+    for (int i = 0; i < n; ++i) {
+        // No extra print statements between inputs
+        for (int j = 0; j < n + 1; ++j) {
+            cin >> augmentedMatrix[i][j];
+        }
+    }
+
+    // Separate A and b from augmented matrix
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            A[i][j] = augmentedMatrix[i][j];
+        }
+        b[i] = augmentedMatrix[i][n];
+    }
+}
+
+// Function to take input for polynomials
+void takeInputForPolynomial(vector<double>& coefficients) {
+    int degree;
+    cout << "Enter the degree of the polynomial: ";
+    cin >> degree;
+
+    coefficients.resize(degree + 1);
+    cout << "Enter the coefficients (from highest degree to constant term):\n";
+    for (int i = 0; i <= degree; ++i) {
+        cout << "Coefficient of x^" << degree - i << ": ";
+        cin >> coefficients[i];
+    }
+}
+
+// Main Menu and Submenus
 void mainMenu() {
-    cout << "******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
+    cout << "\n******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
     cout << "Select a category:\n";
     cout << "1. Linear Equations\n";
     cout << "2. Non-linear Equations\n";
@@ -279,7 +353,7 @@ void mainMenu() {
 }
 
 void linearMenu() {
-    cout << "Select a linear equation solving method:\n";
+    cout << "\nSelect a linear equation solving method:\n";
     cout << "1. Jacobi Method\n";
     cout << "2. Gauss-Seidel Method\n";
     cout << "3. Gauss Elimination\n";
@@ -290,7 +364,7 @@ void linearMenu() {
 }
 
 void nonlinearMenu() {
-    cout << "Select a non-linear equation solving method:\n";
+    cout << "\nSelect a non-linear equation solving method:\n";
     cout << "1. Bisection Method\n";
     cout << "2. False Position Method\n";
     cout << "3. Secant Method\n";
@@ -300,35 +374,163 @@ void nonlinearMenu() {
 }
 
 void diffEqMenu() {
-    cout << "Select a differential equation solving method:\n";
+    cout << "\nSelect a differential equation solving method:\n";
     cout << "1. Runge-Kutta Method (4th Order)\n";
     cout << "0. Return to Main Menu\n";
     cout << "Enter your choice: ";
 }
 
 void matrixMenu() {
-    cout << "Select a matrix operation method:\n";
+    cout << "\nSelect a matrix operation method:\n";
     cout << "1. Matrix Inversion\n";
     cout << "0. Return to Main Menu\n";
     cout << "Enter your choice: ";
 }
 
+// Functions to handle solving based on user's choice
 void solveLinear(int methodChoice) {
-    cout << "Solving linear equation using method " << methodChoice << endl;
+    vector<vector<double>> A;
+    vector<double> b;
+
+    takeInputForLinear(A, b);
+
+    vector<double> solution;
+
+    switch (methodChoice) {
+        case 1: {  // Jacobi Method
+            vector<double> initialGuess(b.size(), 0.0);
+            solution = jacobiMethod(A, b, initialGuess);
+            if (!solution.empty()) {
+                cout << "\nJacobi Method Solution:\n";
+                for (size_t i = 0; i < solution.size(); ++i) {
+                    cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
+                }
+            }
+            break;
+        }
+        case 2: {  // Gauss-Seidel Method
+            vector<double> initialGuess(b.size(), 0.0);
+            solution = gaussSeidelMethod(A, b, initialGuess);
+            if (!solution.empty()) {
+                cout << "\nGauss-Seidel Method Solution:\n";
+                for (size_t i = 0; i < solution.size(); ++i) {
+                    cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
+                }
+            }
+            break;
+        }
+        case 3: {  // Gauss Elimination
+            // Prepare augmented matrix
+            int n = A.size();
+            vector<vector<double>> augmentedMatrix(n, vector<double>(n + 1));
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j) {
+                    augmentedMatrix[i][j] = A[i][j];
+                }
+                augmentedMatrix[i][n] = b[i];
+            }
+
+            solution = gaussElimination(augmentedMatrix);
+            if (!solution.empty()) {
+                cout << "\nGauss Elimination Solution:\n";
+                for (size_t i = 0; i < solution.size(); ++i) {
+                    cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
+                }
+            }
+            break;
+        }
+        case 4: {  // Gauss-Jordan Elimination
+            // Prepare augmented matrix
+            int n = A.size();
+            vector<vector<double>> augmentedMatrix(n, vector<double>(n + 1));
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j) {
+                    augmentedMatrix[i][j] = A[i][j];
+                }
+                augmentedMatrix[i][n] = b[i];
+            }
+
+            solution = gaussJordanElimination(augmentedMatrix);
+            if (!solution.empty()) {
+                cout << "\nGauss-Jordan Elimination Solution:\n";
+                for (size_t i = 0; i < solution.size(); ++i) {
+                    cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
+                }
+            }
+            break;
+        }
+        case 5: {  // LU Factorization
+            solution = luFactorization(A, b);
+            break;
+        }
+        default:
+            cout << "Invalid method choice for linear equations.\n";
+            break;
+    }
 }
 
 void solveNonlinear(int methodChoice) {
-    cout << "Solving non-linear equation using method " << methodChoice << endl;
+    vector<double> coefficients;
+    takeInputForPolynomial(coefficients);
+
+    vector<double> root;
+
+    switch (methodChoice) {
+        case 1: {  // Bisection Method
+            double a, b;
+            cout << "Enter the interval [a, b]:\n";
+            cout << "a = ";
+            cin >> a;
+            cout << "b = ";
+            cin >> b;
+
+            int maxIter = maxIteration;
+            root = biSection(coefficients, maxIter, tolerance, a, b);
+            break;
+        }
+        case 2: {  // False Position Method
+            cout << "False Position Method is not yet implemented." << endl;
+            break;
+        }
+        case 3: {  // Secant Method
+            cout << "Secant Method is not yet implemented." << endl;
+            break;
+        }
+        case 4: {  // Newton-Raphson Method
+            root = newtonRaphson(coefficients, tolerance);
+            break;
+        }
+        default:
+            cout << "Invalid method choice for non-linear equations.\n";
+            break;
+    }
 }
 
 void solveDifferential(int methodChoice) {
-    cout << "Solving differential equation using method " << methodChoice << endl;
+    switch (methodChoice) {
+        case 1: {
+            rungeKuttaMethod();
+            break;
+        }
+        default:
+            cout << "Invalid method choice for differential equations.\n";
+            break;
+    }
 }
 
 void solveMatrix(int methodChoice) {
-    cout << "Performing matrix operation using method " << methodChoice << endl;
+    switch (methodChoice) {
+        case 1: {
+            matrixInversion();
+            break;
+        }
+        default:
+            cout << "Invalid method choice for matrix operations.\n";
+            break;
+    }
 }
 
+// Main Function
 int main() {
     int mainChoice, methodChoice;
 
