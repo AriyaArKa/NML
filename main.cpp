@@ -2,6 +2,7 @@
 using namespace std;
 
 int n;
+int a[1000][1000];
 void gauss_elimination()
 {
     for(int j=1;j<n;j++)
