@@ -15,7 +15,19 @@ void gauss_elimination()
         }
     }
 }
-
+void Jordan_elimination()
+{
+    for(int j=n;j>1;j--)
+    {
+        for(int i=1;i<j;i++)
+        {
+            if(a[i][j]==0) continue;
+            int lcm=a[j][j]*a[i][j]/__gcd(a[j][j],a[i][j]);
+            int nic=lcm/a[j][j],up=lcm/a[i][j];
+            for(int k=1;k<=n+1;k++) a[i][k]=nic*a[j][k]-up*a[i][k];
+        }
+    }
+}
 void mainMenu() {
     cout << "******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
     cout << "Select a category:\n";
