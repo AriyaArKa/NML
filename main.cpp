@@ -516,20 +516,168 @@ vector<double> gaussJordanElimination(vector<vector<double>> matrix) {
     return solution;
 }
 
-// Placeholder for LU Factorization method
+// LU Decomposition Function
+bool luDecomposition(const vector<vector<double>>& A, vector<vector<double>>& L, vector<vector<double>>& U) {
+    int n = A.size();
+    L.assign(n, vector<double>(n, 0.0));
+    U.assign(n, vector<double>(n, 0.0));
+
+    for (int i = 0; i < n; i++) {
+        // Upper Triangular
+        for (int k = i; k < n; k++) {
+            double sum = 0.0;
+            for (int j = 0; j < i; j++)
+                sum += L[i][j] * U[j][k];
+            U[i][k] = A[i][k] - sum;
+        }
+
+        // Lower Triangular
+        for (int k = i; k < n; k++) {
+            if (i == k)
+                L[i][i] = 1.0; // Diagonal as 1
+            else {
+                double sum = 0.0;
+                for (int j = 0; j < i; j++)
+                    sum += L[k][j] * U[j][i];
+                if (fabs(U[i][i]) < 1e-12) {
+                    // Singular matrix
+                    return false;
+                }
+                L[k][i] = (A[k][i] - sum) / U[i][i];
+            }
+        }
+    }
+    return true;
+}
+
+// Forward Substitution
+vector<double> forwardSubstitution(const vector<vector<double>>& L, const vector<double>& b) {
+    int n = L.size();
+    vector<double> y(n);
+    for (int i = 0; i < n; i++) {
+        double sum = 0.0;
+        for (int j = 0; j < i; j++)
+            sum += L[i][j] * y[j];
+        y[i] = b[i] - sum;
+    }
+    return y;
+}
+
+// Backward Substitution
+vector<double> backwardSubstitution(const vector<vector<double>>& U, const vector<double>& y) {
+    int n = U.size();
+    vector<double> x(n);
+    for (int i = n - 1; i >= 0; i--) {
+        double sum = 0.0;
+        for (int j = i + 1; j < n; j++)
+            sum += U[i][j] * x[j];
+        if (fabs(U[i][i]) < 1e-12) {
+            // Singular matrix
+            return {};
+        }
+        x[i] = (y[i] - sum) / U[i][i];
+    }
+    return x;
+}
+
+// LU Factorization method
 vector<double> luFactorization(const vector<vector<double>>& A, const vector<double>& b) {
-    cout << "LU Factorization method is not yet implemented." << endl;
-    return {};
+    vector<vector<double>> L, U;
+    if (!luDecomposition(A, L, U)) {
+        cout << "LU Decomposition failed. Matrix may be singular." << endl;
+        return {};
+    }
+    vector<double> y = forwardSubstitution(L, b);
+    vector<double> x = backwardSubstitution(U, y);
+    return x;
+}
+
+// Matrix Inversion using Gauss-Jordan Elimination
+bool invertMatrix(const vector<vector<double>>& A, vector<vector<double>>& inverse) {
+    int n = A.size();
+    vector<vector<double>> augmentedMatrix(n, vector<double>(2 * n));
+
+    // Initialize augmented matrix [A | I]
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            augmentedMatrix[i][j] = A[i][j];
+        for (int j = n; j < 2 * n; j++)
+            augmentedMatrix[i][j] = (i == (j - n)) ? 1.0 : 0.0;
+    }
+
+    // Perform Gauss-Jordan elimination
+    for (int j = 0; j < n; ++j) {
+        // Partial pivoting
+        int maxRow = j;
+        for (int i = j + 1; i < n; ++i) {
+            if (fabs(augmentedMatrix[i][j]) > fabs(augmentedMatrix[maxRow][j])) {
+                maxRow = i;
+            }
+        }
+        swap(augmentedMatrix[j], augmentedMatrix[maxRow]);
+
+        // Make pivot element 1
+        double pivot = augmentedMatrix[j][j];
+        if (fabs(pivot) < 1e-12) {
+            //cout << "Matrix is singular and cannot be inverted." << endl;
+            return false;
+        }
+        for (int k = 0; k < 2 * n; ++k) {
+            augmentedMatrix[j][k] /= pivot;
+        }
+
+        // Eliminate other entries in column
+        for (int i = 0; i < n; ++i) {
+            if (i != j) {
+                double factor = augmentedMatrix[i][j];
+                for (int k = 0; k < 2 * n; ++k) {
+                    augmentedMatrix[i][k] -= factor * augmentedMatrix[j][k];
+                }
+            }
+        }
+    }
+
+    // Extract inverse matrix
+    inverse.resize(n, vector<double>(n));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            inverse[i][j] = augmentedMatrix[i][j + n];
+        }
+    }
+    return true;
+}
+
+// Matrix Inversion Function
+void matrixInversion() {
+    int n;
+    cout << "Enter the dimension n of the square matrix: ";
+    cin >> n;
+
+    vector<vector<double>> A(n, vector<double>(n));
+    cout << "Enter the elements of the matrix row-wise:\n";
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> A[i][j];
+        }
+    }
+
+    vector<vector<double>> inverse;
+    if (invertMatrix(A, inverse)) {
+        cout << "\nThe inverse matrix is:\n";
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cout << fixed << setprecision(6) << setw(12) << inverse[i][j] << " ";
+            }
+            cout << endl;
+        }
+    } else {
+        cout << "The matrix is singular and cannot be inverted.\n";
+    }
 }
 
 // Placeholder for Runge-Kutta Method (4th Order)
 void rungeKuttaMethod() {
     cout << "Runge-Kutta Method (4th Order) is not yet implemented." << endl;
-}
-
-// Placeholder for Matrix Inversion
-void matrixInversion() {
-    cout << "Matrix Inversion method is not yet implemented." << endl;
 }
 
 // Function to take input for linear equations
@@ -697,6 +845,12 @@ void solveLinear(int methodChoice) {
         }
         case 5: {  // LU Factorization
             solution = luFactorization(A, b);
+            if (!solution.empty()) {
+                cout << "\nLU Factorization Solution:\n";
+                for (size_t i = 0; i < solution.size(); ++i) {
+                    cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
+                }
+            }
             break;
         }
         default:
