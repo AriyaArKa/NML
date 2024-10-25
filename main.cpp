@@ -1,6 +1,82 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/*
+
+void newton_raphson(vector<double> coef, double tolerance = 0.0001){
+    int iteration = 0;
+    double x = 0.0;
+    while (true)
+    {
+        iteration++;
+        double f_x = f(coef, x);
+        double f_prime_x = fprime(coef, x);
+        // Newton-Raphson update formula
+        double x_new = x - f_x / f_prime_x;
+
+        if(fabs(x_new - x) <= tolerance || fabs(f_x) <= tolerance){
+            cout << "[+] - Found Root : " << x_new << endl;
+            cout << "[+] - Iteration Required : " << iteration << endl;
+            return;
+        }
+
+        x = x_new;
+    }
+}
+
+double f(vector<double>& vec, double x){
+    double sum = 0;
+    for(int i = 0; i<vec.size(); i++){
+        sum += vec[i] * pow(x, vec.size()-i-1);
+    }
+    return sum;
+}
+
+
+void biSection(vector<double>& vec, int max_iter, double tolerance, double a, double b) {
+    cout << endl << "BiSection Method:" << endl;
+    int n = vec.size();
+
+    if(f(vec, a) * f(vec, b) >= 0){
+        cout << "Invalid a, b" << endl;
+        return;
+    }
+
+    double c, f_c;
+    
+    for (int iter = 0; iter < max_iter; ++iter) {
+        c = (a+b) / 2;
+
+        f_c = f(vec, c);
+
+        if(fabs(f_c) <= tolerance){
+            cout << "Found Root : " << c << endl;
+            break;
+        }
+
+        if(f(vec, a) * f_c < 0){
+            b = c;
+        }else{
+            a = c;
+        }
+
+        cout << c << endl;
+        
+    }
+
+    cout << "Max iterations reached without convergence." << endl;
+}
+
+int main() {
+    vector<double> vec = {1, 0, -1, -2};
+    int max_iter = 15;
+    double tolerance = 1e-5;
+
+    biSection(vec, max_iter, tolerance, 1, 5);
+
+    return 0;
+}*/
+
 int n;
 int a[1000][1000];
 void gauss_elimination()
