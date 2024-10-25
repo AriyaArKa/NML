@@ -32,6 +32,24 @@ void row_echelon()
 {
     for(int i=1;i<=n;i++) a[i][n+1]/=a[i][i], a[i][i]=1;
 }
+
+/*
+int main()
+{
+    n=4;
+    for(int i=1;i<=n;i++)
+        for(int j=1;j<=n+1;j++) cin >> a[i][j];
+    gauss_elimination();
+    Jordan_elimination();
+    row_echelon();
+    cout << endl;
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=1;j<=n+1;j++) cout << a[i][j] << ' ';
+        cout << endl;
+    }
+
+}*/
 void mainMenu() {
     cout << "******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
     cout << "Select a category:\n";
