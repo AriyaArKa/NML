@@ -5,93 +5,256 @@ typedef long long int ll;
 int maxIteration = 1000;
 double tolerance = 1e-6;
 
-// Function to evaluate polynomial at a given x
+// Function to evaluate polynomial at a given x using Horner's method
 double f(const vector<double>& coef, double x) {
-    double sum = 0.0;
+    double result = coef[0];
     int n = coef.size();
-    for (int i = 0; i < n; ++i) {
-        sum += coef[i] * pow(x, n - i - 1);
+    for (int i = 1; i < n; ++i) {
+        result = result * x + coef[i];
     }
-    return sum;
+    return result;
 }
 
-// Function to evaluate derivative of polynomial at a given x
+// Function to evaluate derivative of polynomial at a given x using Horner's method
 double fPrime(const vector<double>& coef, double x) {
-    double sum = 0.0;
     int n = coef.size();
-    for (int i = 0; i < n - 1; ++i) {
-        sum += (n - i - 1) * coef[i] * pow(x, n - i - 2);
+    if (n <= 1) return 0.0; // Derivative of constant is zero
+    double result = coef[0] * (n - 1);
+    for (int i = 1; i < n - 1; ++i) {
+        result = result * x + coef[i] * (n - i - 1);
     }
-    return sum;
+    return result;
 }
 
-// Newton-Raphson method
-vector<double> newtonRaphson(const vector<double>& coef, double tolerance = 1e-6) {
-    int iteration = 0;
-    double x = 0.0;
-    vector<double> root(1);
+// Function to find intervals where the function changes sign or touches zero
+vector<pair<double, double>> findSignChanges(const vector<double>& coef, double start, double end, double step) {
+    vector<pair<double, double>> intervals;
+    double x_prev = start;
+    double f_prev = f(coef, x_prev);
+    double x_curr, f_curr;
 
-    while (true) {
-        iteration++;
-        double f_x = f(coef, x);
-        double f_prime_x = fPrime(coef, x);
-
-        if (fabs(f_prime_x) < 1e-12) {
-            cout << "Derivative too small, stopping iteration." << endl;
-            return {};
+    for (x_curr = start + step; x_curr <= end; x_curr += step) {
+        f_curr = f(coef, x_curr);
+        if (f_prev * f_curr <= 0.0) {
+            // Sign change detected or zero crossing
+            intervals.push_back({x_prev, x_curr});
         }
-
-        double xNew = x - f_x / f_prime_x;
-
-        if (fabs(xNew - x) <= tolerance || fabs(f_x) <= tolerance) {
-            cout << "[+] Found Root: " << xNew << endl;
-            cout << "[+] Iterations Required: " << iteration << endl;
-            root[0] = xNew;
-            return root;
-        }
-
-        x = xNew;
+        x_prev = x_curr;
+        f_prev = f_curr;
     }
+    return intervals;
 }
 
-// Bisection method
-vector<double> biSection(const vector<double>& coef, int maxIter, double tolerance, double a, double b) {
-    cout << endl << "Bisection Method:" << endl;
-    vector<double> root(1);
+// Newton-Raphson method to find all real roots
+vector<double> newtonRaphsonAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step) {
+    vector<double> roots;
+    vector<double> starting_points;
 
-    if (f(coef, a) * f(coef, b) >= 0) {
-        cout << "Invalid interval [a, b]." << endl;
-        return {};
+    // Generate starting points from start to end with step
+    for (double x = start; x <= end; x += step) {
+        starting_points.push_back(x);
     }
 
-    double c, f_c;
-    for (int iter = 0; iter < maxIter; ++iter) {
-        c = (a + b) / 2.0;
-        f_c = f(coef, c);
+    for (double x0 : starting_points) {
+        double x = x0;
+        int iteration = 0;
+        while (iteration < maxIter) {
+            double f_x = f(coef, x);
+            double f_prime_x = fPrime(coef, x);
 
-        if (fabs(f_c) <= tolerance) {
-            cout << "Found Root: " << c << endl;
-            root[0] = c;
-            return root;
+            if (fabs(f_prime_x) < 1e-12) {
+                // Derivative too small, skip this starting point
+                break;
+            }
+
+            double xNew = x - f_x / f_prime_x;
+
+            if (fabs(xNew - x) <= tolerance || fabs(f_x) <= tolerance) {
+                // Root found
+                bool is_new_root = true;
+                for (double r : roots) {
+                    if (fabs(r - xNew) <= tolerance) {
+                        is_new_root = false;
+                        break;
+                    }
+                }
+                if (is_new_root) {
+                    roots.push_back(xNew);
+                }
+                break;
+            }
+
+            x = xNew;
+            iteration++;
         }
-
-        if (f(coef, a) * f_c < 0) {
-            b = c;
-        } else {
-            a = c;
-        }
-
-        cout << "Iteration " << iter + 1 << ": c = " << c << endl;
     }
-
-    cout << "Max iterations reached without convergence." << endl;
-    return {};
+    return roots;
 }
 
-// Placeholder for False Position Method
-vector<double> falsePosition(const vector<double>& coef, int maxIter, double tolerance, double a, double b) {
-    cout << "False Position Method is not yet implemented." << endl;
-    return {};
+// Bisection method to find all real roots
+vector<double> biSectionAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step) {
+    vector<double> roots;
+    vector<pair<double, double>> intervals = findSignChanges(coef, start, end, step);
+
+    for (auto interval : intervals) {
+        double a = interval.first;
+        double b = interval.second;
+
+        double f_a = f(coef, a);
+        double f_b = f(coef, b);
+
+        // Check if f(a) is zero
+        if (fabs(f_a) <= tolerance) {
+            // a is a root
+            bool is_new_root = true;
+            for (double r : roots) {
+                if (fabs(r - a) <= tolerance) {
+                    is_new_root = false;
+                    break;
+                }
+            }
+            if (is_new_root) {
+                roots.push_back(a);
+            }
+            continue; // Move to next interval
+        }
+
+        // Check if f(b) is zero
+        if (fabs(f_b) <= tolerance) {
+            // b is a root
+            bool is_new_root = true;
+            for (double r : roots) {
+                if (fabs(r - b) <= tolerance) {
+                    is_new_root = false;
+                    break;
+                }
+            }
+            if (is_new_root) {
+                roots.push_back(b);
+            }
+            continue; // Move to next interval
+        }
+
+        // Now check if f(a) and f(b) have opposite signs
+        if (f_a * f_b > 0) {
+            // No root in this interval
+            continue;
+        }
+
+        double c, f_c;
+        int iter;
+        for (iter = 0; iter < maxIter; ++iter) {
+            c = (a + b) / 2.0;
+            f_c = f(coef, c);
+
+            if (fabs(f_c) <= tolerance || fabs(b - a) <= tolerance) {
+                // Root found
+                bool is_new_root = true;
+                for (double r : roots) {
+                    if (fabs(r - c) <= tolerance) {
+                        is_new_root = false;
+                        break;
+                    }
+                }
+                if (is_new_root) {
+                    roots.push_back(c);
+                }
+                break;
+            }
+
+            if (f_a * f_c < 0) {
+                b = c;
+                f_b = f_c;
+            } else {
+                a = c;
+                f_a = f_c;
+            }
+        }
+    }
+    return roots;
+}
+
+// False Position method to find all real roots
+vector<double> falsePositionAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step) {
+    vector<double> roots;
+    vector<pair<double, double>> intervals = findSignChanges(coef, start, end, step);
+
+    for (auto interval : intervals) {
+        double a = interval.first;
+        double b = interval.second;
+        double f_a = f(coef, a);
+        double f_b = f(coef, b);
+
+        // Check if f(a) is zero
+        if (fabs(f_a) <= tolerance) {
+            // a is a root
+            bool is_new_root = true;
+            for (double r : roots) {
+                if (fabs(r - a) <= tolerance) {
+                    is_new_root = false;
+                    break;
+                }
+            }
+            if (is_new_root) {
+                roots.push_back(a);
+            }
+            continue; // Move to next interval
+        }
+
+        // Check if f(b) is zero
+        if (fabs(f_b) <= tolerance) {
+            // b is a root
+            bool is_new_root = true;
+            for (double r : roots) {
+                if (fabs(r - b) <= tolerance) {
+                    is_new_root = false;
+                    break;
+                }
+            }
+            if (is_new_root) {
+                roots.push_back(b);
+            }
+            continue; // Move to next interval
+        }
+
+        // Now check if f(a) and f(b) have opposite signs
+        if (f_a * f_b > 0) {
+            // No root in this interval
+            continue;
+        }
+
+        double c, f_c;
+        int iter;
+        for (iter = 0; iter < maxIter; ++iter) {
+            // Compute c using False Position formula
+            c = (a * f_b - b * f_a) / (f_b - f_a);
+            f_c = f(coef, c);
+
+            if (fabs(f_c) <= tolerance || fabs(b - a) <= tolerance) {
+                // Root found
+                bool is_new_root = true;
+                for (double r : roots) {
+                    if (fabs(r - c) <= tolerance) {
+                        is_new_root = false;
+                        break;
+                    }
+                }
+                if (is_new_root) {
+                    roots.push_back(c);
+                }
+                break;
+            }
+
+            if (f_a * f_c < 0) {
+                b = c;
+                f_b = f_c;
+            } else {
+                a = c;
+                f_a = f_c;
+            }
+        }
+    }
+    return roots;
 }
 
 // Placeholder for Secant Method
@@ -129,7 +292,7 @@ vector<double> jacobiMethod(const vector<vector<double>>& A, const vector<double
         // Check for convergence
         double maxError = *max_element(errors.begin(), errors.end());
         if (maxError < tolerance) {
-            cout << "Jacobi method converged in " << iter + 1 << " iterations." << endl;
+            //cout << "Jacobi method converged in " << iter + 1 << " iterations." << endl;
             return xNew;
         }
         xOld = xNew;
@@ -138,19 +301,6 @@ vector<double> jacobiMethod(const vector<vector<double>>& A, const vector<double
     cout << "Jacobi method did not converge within the maximum number of iterations." << endl;
     return xNew;
 }
-
-/*
-
-4 1 -1 3
-1 5 1 7
-2 1 6 10
-
-Jacobi Method Solution:
-x[1] = 0.809917
-x[2] = 0.991735
-x[3] = 1.231405
-
-*/
 
 // Gauss-Seidel Method Function
 vector<double> gaussSeidelMethod(const vector<vector<double>>& A, const vector<double>& b, const vector<double>& initialGuess = {}) {
@@ -183,7 +333,7 @@ vector<double> gaussSeidelMethod(const vector<vector<double>>& A, const vector<d
         // Check for convergence
         double maxError = *max_element(errors.begin(), errors.end());
         if (maxError < tolerance) {
-            cout << "Gauss-Seidel method converged in " << iter + 1 << " iterations." << endl;
+            //cout << "Gauss-Seidel method converged in " << iter + 1 << " iterations." << endl;
             return x;
         }
     }
@@ -208,6 +358,10 @@ vector<double> gaussElimination(vector<vector<double>> matrix) {
         swap(matrix[j], matrix[maxRow]);
 
         for (int i = j + 1; i < n; ++i) {
+            if (fabs(matrix[j][j]) < 1e-12) {
+                cout << "Zero pivot encountered, no unique solution." << endl;
+                return {};
+            }
             double factor = matrix[i][j] / matrix[j][j];
             for (int k = j; k <= n; ++k) {
                 matrix[i][k] -= factor * matrix[j][k];
@@ -218,6 +372,10 @@ vector<double> gaussElimination(vector<vector<double>> matrix) {
     // Back substitution
     vector<double> solution(n);
     for (int i = n - 1; i >= 0; --i) {
+        if (fabs(matrix[i][i]) < 1e-12) {
+            cout << "Zero pivot encountered, no unique solution." << endl;
+            return {};
+        }
         solution[i] = matrix[i][n];
         for (int j = i + 1; j < n; ++j) {
             solution[i] -= matrix[i][j] * solution[j];
@@ -300,15 +458,7 @@ void takeInputForLinear(vector<vector<double>>& A, vector<double>& b) {
     vector<vector<double>> augmentedMatrix(n, vector<double>(n + 1));
 
     // Display augmented matrix format
-    cout << "\nThe augmented matrix format is as follows (each row has " << n + 1 << " coefficients):" << endl;
-    for (int i = 1; i <= n; ++i) {
-        cout << "|";
-        for (int j = 1; j <= n; ++j) {
-            cout << " a" << i << j;
-        }
-        cout << " | b" << i << " |" << endl;
-    }
-    cout << "\nEnter the augmented matrix coefficients:" << endl;
+    cout << "\nEnter the augmented matrix coefficients row-wise (each row has " << n + 1 << " coefficients):\n";
 
     for (int i = 0; i < n; ++i) {
         // No extra print statements between inputs
@@ -338,6 +488,14 @@ void takeInputForPolynomial(vector<double>& coefficients) {
         cout << "Coefficient of x^" << degree - i << ": ";
         cin >> coefficients[i];
     }
+}
+
+// Function to remove duplicates and sort roots
+void removeDuplicatesAndSort(vector<double>& roots, double tolerance) {
+    sort(roots.begin(), roots.end());
+    roots.erase(unique(roots.begin(), roots.end(), [tolerance](double a, double b) {
+        return fabs(a - b) <= tolerance;
+    }), roots.end());
 }
 
 // Main Menu and Submenus
@@ -473,23 +631,32 @@ void solveNonlinear(int methodChoice) {
     vector<double> coefficients;
     takeInputForPolynomial(coefficients);
 
-    vector<double> root;
+    vector<double> roots;
+    double start = -100.0;
+    double end = 100.0;
+    double step = 0.5;
 
     switch (methodChoice) {
         case 1: {  // Bisection Method
-            double a, b;
-            cout << "Enter the interval [a, b]:\n";
-            cout << "a = ";
-            cin >> a;
-            cout << "b = ";
-            cin >> b;
+            roots = biSectionAllRoots(coefficients, maxIteration, tolerance, start, end, step);
+            removeDuplicatesAndSort(roots, tolerance);
 
-            int maxIter = maxIteration;
-            root = biSection(coefficients, maxIter, tolerance, a, b);
+            cout << "\nRoots found by Bisection Method:\n";
+            for (double root : roots) {
+                cout << fixed << setprecision(6) << root << " ";
+            }
+            cout << endl;
             break;
         }
         case 2: {  // False Position Method
-            cout << "False Position Method is not yet implemented." << endl;
+            roots = falsePositionAllRoots(coefficients, maxIteration, tolerance, start, end, step);
+            removeDuplicatesAndSort(roots, tolerance);
+
+            cout << "\nRoots found by False Position Method:\n";
+            for (double root : roots) {
+                cout << fixed << setprecision(6) << root << " ";
+            }
+            cout << endl;
             break;
         }
         case 3: {  // Secant Method
@@ -497,7 +664,14 @@ void solveNonlinear(int methodChoice) {
             break;
         }
         case 4: {  // Newton-Raphson Method
-            root = newtonRaphson(coefficients, tolerance);
+            roots = newtonRaphsonAllRoots(coefficients, maxIteration, tolerance, start, end, step);
+            removeDuplicatesAndSort(roots, tolerance);
+
+            cout << "\nRoots found by Newton-Raphson Method:\n";
+            for (double root : roots) {
+                cout << fixed << setprecision(6) << root << " ";
+            }
+            cout << endl;
             break;
         }
         default:
