@@ -45,6 +45,98 @@ vector<pair<double, double>> findSignChanges(const vector<double>& coef, double 
     return intervals;
 }
 
+// Function to remove duplicates and sort roots
+void removeDuplicatesAndSort(vector<double>& roots, double tolerance) {
+    sort(roots.begin(), roots.end());
+    roots.erase(unique(roots.begin(), roots.end(), [tolerance](double a, double b) {
+        return fabs(a - b) <= tolerance;
+    }), roots.end());
+}
+
+// Secant Method to find all real roots
+vector<double> secantMethodAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step) {
+    vector<double> roots;
+    vector<pair<double, double>> intervals = findSignChanges(coef, start, end, step);
+
+    for (auto interval : intervals) {
+        double x0 = interval.first;
+        double x1 = interval.second;
+        double f_x0 = f(coef, x0);
+        double f_x1 = f(coef, x1);
+
+        // Check if f(x0) is zero
+        if (fabs(f_x0) <= tolerance) {
+            // x0 is a root
+            bool is_new_root = true;
+            for (double r : roots) {
+                if (fabs(r - x0) <= tolerance) {
+                    is_new_root = false;
+                    break;
+                }
+            }
+            if (is_new_root) {
+                roots.push_back(x0);
+            }
+            continue; // Move to next interval
+        }
+
+        // Check if f(x1) is zero
+        if (fabs(f_x1) <= tolerance) {
+            // x1 is a root
+            bool is_new_root = true;
+            for (double r : roots) {
+                if (fabs(r - x1) <= tolerance) {
+                    is_new_root = false;
+                    break;
+                }
+            }
+            if (is_new_root) {
+                roots.push_back(x1);
+            }
+            continue; // Move to next interval
+        }
+
+        // Apply Secant Method
+        double x_prev = x0;
+        double x_curr = x1;
+        double f_prev = f_x0;
+        double f_curr = f_x1;
+
+        int iteration = 0;
+        while (iteration < maxIter) {
+            if (fabs(f_curr - f_prev) < 1e-12) {
+                // Denominator too small, skip this interval
+                break;
+            }
+            double x_next = x_curr - f_curr * (x_curr - x_prev) / (f_curr - f_prev);
+            double f_next = f(coef, x_next);
+
+            if (fabs(f_next) <= tolerance || fabs(x_next - x_curr) <= tolerance) {
+                // Root found
+                bool is_new_root = true;
+                for (double r : roots) {
+                    if (fabs(r - x_next) <= tolerance) {
+                        is_new_root = false;
+                        break;
+                    }
+                }
+                if (is_new_root) {
+                    roots.push_back(x_next);
+                }
+                break;
+            }
+
+            x_prev = x_curr;
+            f_prev = f_curr;
+            x_curr = x_next;
+            f_curr = f_next;
+
+            iteration++;
+        }
+    }
+    return roots;
+}
+
 // Newton-Raphson method to find all real roots
 vector<double> newtonRaphsonAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step) {
     vector<double> roots;
@@ -255,12 +347,6 @@ vector<double> falsePositionAllRoots(const vector<double>& coef, int maxIter, do
         }
     }
     return roots;
-}
-
-// Placeholder for Secant Method
-vector<double> secantMethod(const vector<double>& coef, int maxIter, double tolerance, double x0, double x1) {
-    cout << "Secant Method is not yet implemented." << endl;
-    return {};
 }
 
 // Jacobi Method Function
@@ -490,14 +576,6 @@ void takeInputForPolynomial(vector<double>& coefficients) {
     }
 }
 
-// Function to remove duplicates and sort roots
-void removeDuplicatesAndSort(vector<double>& roots, double tolerance) {
-    sort(roots.begin(), roots.end());
-    roots.erase(unique(roots.begin(), roots.end(), [tolerance](double a, double b) {
-        return fabs(a - b) <= tolerance;
-    }), roots.end());
-}
-
 // Main Menu and Submenus
 void mainMenu() {
     cout << "\n******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
@@ -660,7 +738,14 @@ void solveNonlinear(int methodChoice) {
             break;
         }
         case 3: {  // Secant Method
-            cout << "Secant Method is not yet implemented." << endl;
+            roots = secantMethodAllRoots(coefficients, maxIteration, tolerance, start, end, step);
+            removeDuplicatesAndSort(roots, tolerance);
+
+            cout << "\nRoots found by Secant Method:\n";
+            for (double root : roots) {
+                cout << fixed << setprecision(6) << root << " ";
+            }
+            cout << endl;
             break;
         }
         case 4: {  // Newton-Raphson Method
