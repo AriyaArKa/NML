@@ -102,6 +102,10 @@ void takeInputforLinear() {
 // Function to evaluate polynomial at a given x
 double f(const vector<double>& coef, double x) {1
 
+=======
+// Function to evaluate polynomial at a given x
+double f(const vector<double>& coef, double x) {
+>>>>>>> 2a884421707a8c0b4f91fe485fc90629c253efc6
     double sum = 0.0;
     int n = coef.size();
     for (int i = 0; i < n; ++i) {
