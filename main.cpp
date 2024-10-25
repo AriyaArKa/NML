@@ -1,5 +1,20 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
+
+int n;
+void gauss_elimination()
+{
+    for(int j=1;j<n;j++)
+    {
+        for(int i=n;i>j;i--)
+        {
+            if(a[i][j]==0) continue;
+            int lcm=a[j][j]*a[i][j]/__gcd(a[j][j],a[i][j]);
+            int up=lcm/a[j][j], nic=lcm/a[i][j];
+            for(int k=1;k<=n+1;k++) a[i][k]=up*a[j][k]-nic*a[i][k];
+        }
+    }
+}
 
 void mainMenu() {
     cout << "******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
