@@ -447,7 +447,9 @@ vector<double> jacobiMethod(const vector<vector<double>>& A, const vector<double
             }
             if (fabs(A[i][i]) < 1e-12)
             {
+                cerr << "----------------------------------------------------------------------------------------------------\n";
                 cerr << "Zero diagonal element encountered at row " << i + 1 << endl;
+                cerr << "----------------------------------------------------------------------------------------------------\n";
                 return {};
             }
             xNew[i] = (b[i] - sigma) / A[i][i];
@@ -463,7 +465,9 @@ vector<double> jacobiMethod(const vector<vector<double>>& A, const vector<double
         xOld = xNew;
     }
 
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Jacobi method did not converge within the maximum number of iterations." << endl;
+    cout << "----------------------------------------------------------------------------------------------------\n";
     return xNew;
 }
 
@@ -510,7 +514,9 @@ vector<double> gaussSeidelMethod(const vector<vector<double>>& A, const vector<d
         }
     }
 
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Gauss-Seidel method did not converge within the maximum number of iterations." << endl;
+    cout << "----------------------------------------------------------------------------------------------------\n";
     return x;
 }
 
@@ -590,7 +596,9 @@ vector<double> gaussJordanElimination(vector<vector<double>> matrix)
         double pivot = matrix[j][j];
         if (fabs(pivot) < 1e-12)
         {
+            cout << "----------------------------------------------------------------------------------------------------\n";
             cout << "Zero pivot encountered, no unique solution." << endl;
+            cout << "----------------------------------------------------------------------------------------------------\n";
             return {};
         }
         for (int k = j; k <= n; ++k)
@@ -703,7 +711,9 @@ vector<double> luFactorization(const vector<vector<double>>& A, const vector<dou
     vector<vector<double>> L, U;
     if (!luDecomposition(A, L, U))
     {
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "LU Decomposition failed. Matrix may be singular." << endl;
+        cout << "----------------------------------------------------------------------------------------------------\n";
         return {};
     }
     vector<double> y = forwardSubstitution(L, b);
@@ -781,8 +791,10 @@ bool invertMatrix(const vector<vector<double>>& A, vector<vector<double>>& inver
 void matrixInversion()
 {
     int n;
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter the dimension n of the square matrix: ";
     cin >> n;
+    cout << "----------------------------------------------------------------------------------------------------\n";
 
     vector<vector<double>> A(n, vector<double>(n));
     cout << "Enter the elements of the matrix row-wise:\n";
@@ -797,7 +809,8 @@ void matrixInversion()
     vector<vector<double>> inverse;
     if (invertMatrix(A, inverse))
     {
-        cout << "\nThe inverse matrix is:\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
+        cout << "The inverse matrix is:\n";
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
@@ -806,10 +819,13 @@ void matrixInversion()
             }
             cout << endl;
         }
+        cout << "----------------------------------------------------------------------------------------------------\n";
     }
     else
     {
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "The matrix is singular and cannot be inverted.\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
     }
 }
 
@@ -835,18 +851,22 @@ double cosineFunction(double x, double a, double b)
     return a * cos(b * x);
 }
 
-// Runge-Kutta Method (4th Order)
+// Runge-Kutta Method
 void rungeKuttaMethod()
 {
     double x, y, h;
     int steps, choice;
 
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Choose a function type for dy/dx:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "1. Polynomial (ax^n + ... + c)\n";
     cout << "2. Trigonometric Cosine (a * cos(b * x))\n";
     cout << "3. Trigonometric Sine (a * sin(b * x))\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter your choice (1/2/3): ";
     cin >> choice;
+    cout << "----------------------------------------------------------------------------------------------------\n";
 
     vector<double> coefficients;
     double a, b_param;
@@ -876,6 +896,7 @@ void rungeKuttaMethod()
         return;
     }
 
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter initial value of x: ";
     cin >> x;
     cout << "Enter initial value of y: ";
@@ -895,7 +916,9 @@ void rungeKuttaMethod()
             return sineFunction(x_val, a, b_param);
     };
 
-    cout << "\nResults using Runge-Kutta Method (4th Order):\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+    cout << "Results using Runge-Kutta Method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << fixed << setprecision(6);
     for (int i = 0; i < steps; i++)
     {
@@ -909,14 +932,17 @@ void rungeKuttaMethod()
 
         cout << "Step " << i + 1 << ": x = " << x << ", y = " << y << endl;
     }
+    cout << "----------------------------------------------------------------------------------------------------\n";
 }
 
 // Function to take input for linear equations
 void takeInputForLinear(vector<vector<double>>& A, vector<double>& b)
 {
     int n;
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter the number of equations: ";
     cin >> n;
+    cout << "----------------------------------------------------------------------------------------------------\n";
 
     A.resize(n, vector<double>(n));
     b.resize(n);
@@ -924,7 +950,16 @@ void takeInputForLinear(vector<vector<double>>& A, vector<double>& b)
     vector<vector<double>> augmentedMatrix(n, vector<double>(n + 1));
 
     // Display augmented matrix format
-    cout << "\nEnter the augmented matrix coefficients row-wise (each row has " << n + 1 << " coefficients):\n";
+    cout << "The augmented matrix format is as follows (each row has " << n + 1 << " coefficients):" << endl;
+    cout << "----------------------------------------------------------------------------------------------------\n";
+    for (int i = 1; i <= n; ++i) {
+        cout << "|";
+        for (int j = 1; j <= n; ++j) {
+            cout << " a" << i << j;
+        }
+        cout << " | b" << i << " |" << endl;
+    }
+    cout << "----------------------------------------------------------------------------------------------------\n";
 
     for (int i = 0; i < n; ++i)
     {
@@ -933,6 +968,7 @@ void takeInputForLinear(vector<vector<double>>& A, vector<double>& b)
             cin >> augmentedMatrix[i][j];
         }
     }
+    cout << "----------------------------------------------------------------------------------------------------\n";
 
     // Separate A and b from augmented matrix
     for (int i = 0; i < n; ++i)
@@ -949,78 +985,98 @@ void takeInputForLinear(vector<vector<double>>& A, vector<double>& b)
 void takeInputForPolynomial(vector<double>& coefficients)
 {
     int degree;
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter the degree of the polynomial: ";
     cin >> degree;
+    cout << "----------------------------------------------------------------------------------------------------\n";
 
     coefficients.resize(degree + 1);
     cout << "Enter the coefficients (from highest degree to constant term):\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+    for (int i = 0; i < degree; ++i)
+    {
+        cout << "a" << i << "x^" << degree - i << " + ";  
+    }
+    cout << "a" << degree << " = " << 0 << "\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+
     for (int i = 0; i <= degree; ++i)
     {
-        cout << "Coefficient of x^" << degree - i << ": ";
         cin >> coefficients[i];
     }
+    cout << "----------------------------------------------------------------------------------------------------\n";
 }
 
 // Main Menu and Submenus
 void mainMenu()
 {
-    cout << "\n******** NUMERICAL METHODS CONSOLE APPLICATION ********\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+    cout << "||||||||||||||||||||||||||||||| NUMERICAL METHODS CONSOLE APPLICATION ||||||||||||||||||||||||||||||\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Select a category:\n";
     cout << "1. Linear Equations\n";
     cout << "2. Non-linear Equations\n";
     cout << "3. Differential Equations\n";
     cout << "4. Matrix Operations\n";
-    cout << "0. Exit\n"; // Press 0 in the main menu to exit the program
+    cout << "0. Exit\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter your choice: ";
 }
 
 void linearMenu()
 {
-    cout << "\nSelect a linear equation solving method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+    cout << "Select a linear equation solving method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "1. Jacobi Method\n";
     cout << "2. Gauss-Seidel Method\n";
     cout << "3. Gauss Elimination\n";
     cout << "4. Gauss-Jordan Elimination\n";
     cout << "5. LU Factorization\n";
     cout << "0. Return to Main Menu\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter your choice: ";
 }
 
 void nonlinearMenu()
 {
-    cout << "\nSelect a non-linear equation solving method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+    cout << "Select a non-linear equation solving method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "1. Bisection Method\n";
     cout << "2. False Position Method\n";
     cout << "3. Secant Method\n";
     cout << "4. Newton-Raphson Method\n";
     cout << "0. Return to Main Menu\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter your choice: ";
 }
 
 void diffEqMenu()
 {
-    cout << "\nSelect a differential equation solving method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+    cout << "Select a differential equation solving method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "1. Runge-Kutta Method\n";
     cout << "0. Return to Main Menu\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter your choice: ";
 }
 
 void matrixMenu()
 {
-    cout << "\nSelect a matrix operation method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+    cout << "Select a matrix operation method:\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "1. Matrix Inversion\n";
     cout << "0. Return to Main Menu\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
     cout << "Enter your choice: ";
 }
 
 // Functions to handle solving based on user's choice
-void solveLinear(int methodChoice)
+void solveLinear(int methodChoice, const vector<vector<double>>& A, const vector<double>& b)
 {
-    vector<vector<double>> A;
-    vector<double> b;
-
-    takeInputForLinear(A, b);
-
     vector<double> solution;
 
     switch (methodChoice)
@@ -1031,11 +1087,14 @@ void solveLinear(int methodChoice)
         solution = jacobiMethod(A, b, initialGuess);
         if (!solution.empty())
         {
+            cout << "----------------------------------------------------------------------------------------------------\n";
             cout << "\nJacobi Method Solution:\n";
+            cout << "----------------------------------------------------------------------------------------------------\n";
             for (size_t i = 0; i < solution.size(); ++i)
             {
                 cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
             }
+            cout << "----------------------------------------------------------------------------------------------------\n";
         }
         break;
     }
@@ -1045,11 +1104,15 @@ void solveLinear(int methodChoice)
         solution = gaussSeidelMethod(A, b, initialGuess);
         if (!solution.empty())
         {
+            cout << "----------------------------------------------------------------------------------------------------\n";
             cout << "\nGauss-Seidel Method Solution:\n";
+            cout << "----------------------------------------------------------------------------------------------------\n";
             for (size_t i = 0; i < solution.size(); ++i)
             {
                 cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
             }
+            cout << "----------------------------------------------------------------------------------------------------\n";
+
         }
         break;
     }
@@ -1070,11 +1133,14 @@ void solveLinear(int methodChoice)
         solution = gaussElimination(augmentedMatrix);
         if (!solution.empty())
         {
+            cout << "----------------------------------------------------------------------------------------------------\n";
             cout << "\nGauss Elimination Solution:\n";
+            cout << "----------------------------------------------------------------------------------------------------\n";
             for (size_t i = 0; i < solution.size(); ++i)
             {
                 cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
             }
+            cout << "----------------------------------------------------------------------------------------------------\n";
         }
         break;
     }
@@ -1095,11 +1161,14 @@ void solveLinear(int methodChoice)
         solution = gaussJordanElimination(augmentedMatrix);
         if (!solution.empty())
         {
+            cout << "----------------------------------------------------------------------------------------------------\n";
             cout << "\nGauss-Jordan Elimination Solution:\n";
+            cout << "----------------------------------------------------------------------------------------------------\n";
             for (size_t i = 0; i < solution.size(); ++i)
             {
                 cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
             }
+            cout << "----------------------------------------------------------------------------------------------------\n";
         }
         break;
     }
@@ -1108,25 +1177,27 @@ void solveLinear(int methodChoice)
         solution = luFactorization(A, b);
         if (!solution.empty())
         {
+            cout << "----------------------------------------------------------------------------------------------------\n";
             cout << "\nLU Factorization Solution:\n";
+            cout << "----------------------------------------------------------------------------------------------------\n";
             for (size_t i = 0; i < solution.size(); ++i)
             {
                 cout << "x[" << i + 1 << "] = " << fixed << setprecision(6) << solution[i] << endl;
             }
+            cout << "----------------------------------------------------------------------------------------------------\n";
         }
         break;
     }
     default:
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "Invalid method choice for linear equations.\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
         break;
     }
 }
 
-void solveNonlinear(int methodChoice)
+void solveNonlinear(int methodChoice, const vector<double>& coefficients)
 {
-    vector<double> coefficients;
-    takeInputForPolynomial(coefficients);
-
     vector<double> roots;
     double start = -100.0;
     double end = 100.0;
@@ -1139,12 +1210,15 @@ void solveNonlinear(int methodChoice)
         roots = biSectionAllRoots(coefficients, maxIteration, tolerance, start, end, step);
         removeDuplicatesAndSort(roots, tolerance);
 
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "\nRoots found by Bisection Method:\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
         for (double root : roots)
         {
             cout << fixed << setprecision(6) << root << " ";
         }
         cout << endl;
+        cout << "----------------------------------------------------------------------------------------------------\n";
         break;
     }
     case 2:
@@ -1152,12 +1226,15 @@ void solveNonlinear(int methodChoice)
         roots = falsePositionAllRoots(coefficients, maxIteration, tolerance, start, end, step);
         removeDuplicatesAndSort(roots, tolerance);
 
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "\nRoots found by False Position Method:\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
         for (double root : roots)
         {
             cout << fixed << setprecision(6) << root << " ";
         }
         cout << endl;
+        cout << "----------------------------------------------------------------------------------------------------\n";
         break;
     }
     case 3:
@@ -1165,12 +1242,15 @@ void solveNonlinear(int methodChoice)
         roots = secantMethodAllRoots(coefficients, maxIteration, tolerance, start, end, step);
         removeDuplicatesAndSort(roots, tolerance);
 
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "\nRoots found by Secant Method:\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
         for (double root : roots)
         {
             cout << fixed << setprecision(6) << root << " ";
         }
         cout << endl;
+        cout << "----------------------------------------------------------------------------------------------------\n";
         break;
     }
     case 4:
@@ -1178,16 +1258,21 @@ void solveNonlinear(int methodChoice)
         roots = newtonRaphsonAllRoots(coefficients, maxIteration, tolerance, start, end, step);
         removeDuplicatesAndSort(roots, tolerance);
 
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "\nRoots found by Newton-Raphson Method:\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
         for (double root : roots)
         {
             cout << fixed << setprecision(6) << root << " ";
         }
         cout << endl;
+        cout << "----------------------------------------------------------------------------------------------------\n";
         break;
     }
     default:
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "Invalid method choice for non-linear equations.\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
         break;
     }
 }
@@ -1202,7 +1287,9 @@ void solveDifferential(int methodChoice)
         break;
     }
     default:
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "Invalid method choice for differential equations.\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
         break;
     }
 }
@@ -1217,12 +1304,13 @@ void solveMatrix(int methodChoice)
         break;
     }
     default:
+        cout << "----------------------------------------------------------------------------------------------------\n";
         cout << "Invalid method choice for matrix operations.\n";
+        cout << "----------------------------------------------------------------------------------------------------\n";
         break;
     }
 }
 
-// Main Function
 int main()
 {
     int mainChoice, methodChoice;
@@ -1234,32 +1322,45 @@ int main()
 
         if (mainChoice == 0)
         {
+            cout << "----------------------------------------------------------------------------------------------------\n";
             cout << "Exiting the program.\n";
+            cout << "----------------------------------------------------------------------------------------------------\n";
             break;
         }
 
         switch (mainChoice)
         {
         case 1: // Linear Equations
+        {
+            vector<vector<double>> A;
+            vector<double> b;
+            takeInputForLinear(A, b);
+
             while (true)
             {
                 linearMenu();
                 cin >> methodChoice;
                 if (methodChoice == 0)
                     break;
-                solveLinear(methodChoice);
+                solveLinear(methodChoice, A, b);
             }
             break;
+        }
         case 2: // Non-linear Equations
+        {
+            vector<double> coefficients;
+            takeInputForPolynomial(coefficients);
+
             while (true)
             {
                 nonlinearMenu();
                 cin >> methodChoice;
                 if (methodChoice == 0)
                     break;
-                solveNonlinear(methodChoice);
+                solveNonlinear(methodChoice, coefficients);
             }
             break;
+        }
         case 3: // Differential Equations
             while (true)
             {
@@ -1281,7 +1382,9 @@ int main()
             }
             break;
         default:
+            cout << "----------------------------------------------------------------------------------------------------\n";
             cout << "Invalid choice! Please select a valid option.\n";
+            cout << "----------------------------------------------------------------------------------------------------\n";
             break;
         }
     }
