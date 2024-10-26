@@ -130,21 +130,20 @@ The bisection method is a bracketing method that repeatedly bisects an interval 
 
 - The function must be continuous on $[a, b]$ and $f(a)$ and $f(b)$ must have opposite signs.
 
-#### False Position Method
+### Method of False Position
 
-Also known as the Regula Falsi method, it improves upon the bisection method by using a secant line to estimate the root.
+This method, also known as the Regula Falsi method, is an enhancement of the bisection method which employs a secant line to approximate the position of the root.
 
-**Algorithm Steps**:
+**Overview of Steps in the Algorithm**:
 
-1. Choose an initial interval $[a, b]$ where the function changes sign.
-2. Compute $c$ using the formula:
+1. Specify a start interval $[a, b]$ in which there is a change of sign of the function f.
+2. Calculate c as:
 
-   $c = a - \dfrac{f(a)(b - a)}{f(b) - f(a)}$
+   c = a - f(a)(b - a)/[f(b) - f(a)].
 
-3. Evaluate the function at $c$.
-4. Decide the subinterval $[a, c]$ or $[c, b]$ where the root lies.
-5. Repeat until convergence.
-
+3. Consider f(c).
+4. Choose the interval $[a,c]$ or the interval $[c,b]$ for the location of the root.
+5. Continue while not completed.
 #### Secant Method
 
 The secant method is an open method that uses two initial approximations and approximates the derivative by a finite difference.
