@@ -21,12 +21,6 @@ This is a console-based application written in C++ that implements various numer
     - [Runge-Kutta Method (Fourth Order)](#runge-kutta-method-fourth-order)
   - [Matrix Operations](#matrix-operations)
     - [Matrix Inversion using Gauss-Jordan Elimination](#matrix-inversion-using-gauss-jordan-elimination)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Compilation and Execution](#compilation-and-execution)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
@@ -43,7 +37,7 @@ This is a console-based application written in C++ that implements various numer
 
 #### Jacobi Method
 
-The Jacobi method is an iterative algorithm used to solve a system of linear equations. It is based on solving each equation for its own variable in terms of the other variables and iteratively updating the values until convergence.
+The Jacobi method is an iterative algorithm for solving a system of linear equations. It is based on solving each equation for its own variable in terms of the other variables and iteratively updating the values until convergence.
 
 **Algorithm Steps**:
 
@@ -51,7 +45,7 @@ The Jacobi method is an iterative algorithm used to solve a system of linear equ
 2. For each iteration:
    - Compute the new value for each variable using the previous iteration's values.
    - Calculate the error between the new and old values.
-3. Repeat until the maximum error is less than the specified tolerance or the maximum number of iterations is reached.
+3. Repeat until the maximum error exceeds the specified tolerance or the maximum number of iterations is reached.
 
 **Convergence Criteria**:
 
@@ -59,7 +53,7 @@ The Jacobi method is an iterative algorithm used to solve a system of linear equ
 
 #### Gauss-Seidel Method
 
-The Gauss-Seidel method is an improvement over the Jacobi method, where it uses the latest updated values within an iteration. This often results in faster convergence compared to the Jacobi method.
+The Gauss-Seidel method is an improvement over the Jacobi method. It uses the latest updated values within an iteration, which often results in faster convergence.
 
 **Algorithm Steps**:
 
@@ -102,16 +96,16 @@ Gauss-Jordan elimination extends Gauss elimination by transforming the matrix in
 
 #### LU Factorization
 
-LU factorization decomposes a matrix into a product of a lower triangular matrix (L) and an upper triangular matrix (U). This method is efficient for solving multiple systems with the same coefficient matrix but different right-hand sides.
+LU factorization decomposes a matrix into a product of a lower triangular matrix ($L$) and an upper triangular matrix ($U$). This method is efficient for solving multiple systems with the same coefficient matrix but different right-hand sides.
 
 **Algorithm Steps**:
 
 1. **LU Decomposition**:
-   - Decompose matrix A into L and U such that `A = LU`.
+   - Decompose matrix $A$ into $L$ and $U$ such that $A = LU$.
 2. **Forward Substitution**:
-   - Solve `Ly = b` for `y`.
+   - Solve $Ly = b$ for $y$.
 3. **Backward Substitution**:
-   - Solve `Ux = y` for `x`.
+   - Solve $Ux = y$ for $x$.
 
 **Advantages**:
 
@@ -126,15 +120,15 @@ The bisection method is a bracketing method that repeatedly bisects an interval 
 
 **Algorithm Steps**:
 
-1. Choose an initial interval `[a, b]` where the function changes sign.
-2. Compute the midpoint `c = (a + b) / 2`.
-3. Evaluate the function at `c`.
-4. Decide the subinterval `[a, c]` or `[c, b]` where the root lies.
-5. Repeat until the interval is sufficiently small or the function value at `c` is within the tolerance.
+1. Choose an initial interval $[a, b]$ where the function changes sign.
+2. Compute the midpoint $c = \dfrac{a + b}{2}$.
+3. Evaluate the function at $c$.
+4. Decide the subinterval $[a, c]$ or $[c, b]$ where the root lies.
+5. Repeat until the interval is sufficiently small or the function value at $c$ is within the tolerance.
 
 **Convergence Criteria**:
 
-- The function must be continuous on `[a, b]` and `f(a)` and `f(b)` must have opposite signs.
+- The function must be continuous on $[a, b]$ and $f(a)$ and $f(b)$ must have opposite signs.
 
 #### False Position Method
 
@@ -142,11 +136,13 @@ Also known as the Regula Falsi method, it improves upon the bisection method by 
 
 **Algorithm Steps**:
 
-1. Choose an initial interval `[a, b]` where the function changes sign.
-2. Compute `c` using the formula:
-   \[ c = \frac{a \cdot f(b) - b \cdot f(a)}{f(b) - f(a)} \]
-3. Evaluate the function at `c`.
-4. Decide the subinterval `[a, c]` or `[c, b]` where the root lies.
+1. Choose an initial interval $[a, b]$ where the function changes sign.
+2. Compute $c$ using the formula:
+
+   $c = a - \dfrac{f(a)(b - a)}{f(b) - f(a)}$
+
+3. Evaluate the function at $c$.
+4. Decide the subinterval $[a, c]$ or $[c, b]$ where the root lies.
 5. Repeat until convergence.
 
 #### Secant Method
@@ -155,9 +151,11 @@ The secant method is an open method that uses two initial approximations and app
 
 **Algorithm Steps**:
 
-1. Choose two initial approximations `x0` and `x1`.
+1. Choose two initial approximations $x_0$ and $x_1$.
 2. Compute the next approximation using:
-   \[ x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})} \]
+
+   $x_{n+1} = x_n - f(x_n) \dfrac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}$
+
 3. Repeat until the difference between successive approximations is within the tolerance.
 
 **Advantages**:
@@ -171,9 +169,11 @@ The Newton-Raphson method is an open method that uses the function and its deriv
 
 **Algorithm Steps**:
 
-1. Choose an initial approximation `x0`.
+1. Choose an initial approximation $x_0$.
 2. Compute the next approximation using:
-   \[ x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \]
+
+   $x_{n+1} = x_n - \dfrac{f(x_n)}{f'(x_n)}$
+
 3. Repeat until convergence criteria are met.
 
 **Advantages**:
@@ -194,16 +194,24 @@ The Runge-Kutta method is a powerful technique for solving ordinary differential
 
 **Algorithm Steps**:
 
-1. Given an initial value problem \( y' = f(x, y) \), \( y(x_0) = y_0 \), and step size `h`.
-2. For each step:
-   - Compute the slopes:
-     - \( k_1 = h \cdot f(x_n, y_n) \)
-     - \( k_2 = h \cdot f(x_n + \frac{h}{2}, y_n + \frac{k_1}{2}) \)
-     - \( k_3 = h \cdot f(x_n + \frac{h}{2}, y_n + \frac{k_2}{2}) \)
-     - \( k_4 = h \cdot f(x_n + h, y_n + k_3) \)
-   - Update the solution:
-     - \( y_{n+1} = y_n + \frac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4) \)
-   - Increment \( x_{n+1} = x_n + h \)
+Given an initial value problem $y' = f(x, y)$, $y(x_0) = y_0$, and step size $h$.
+
+For each step:
+
+1. Compute the slopes:
+
+   - $k_1 = h \cdot f(x_n, y_n)$
+   - $k_2 = h \cdot f\left(x_n + \dfrac{h}{2}, y_n + \dfrac{k_1}{2}\right)$
+   - $k_3 = h \cdot f\left(x_n + \dfrac{h}{2}, y_n + \dfrac{k_2}{2}\right)$
+   - $k_4 = h \cdot f\left(x_n + h, y_n + k_3\right)$
+
+2. Update the solution:
+
+   $y_{n+1} = y_n + \dfrac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4)$
+
+3. Increment:
+
+   $x_{n+1} = x_n + h$
 
 **Advantages**:
 
@@ -218,11 +226,11 @@ This method computes the inverse of a matrix by augmenting it with the identity 
 
 **Algorithm Steps**:
 
-1. Form the augmented matrix `[A | I]`, where `I` is the identity matrix.
-2. Apply Gauss-Jordan elimination to transform `[A | I]` into `[I | A^{-1}]`.
-3. Extract the inverse `A^{-1}` from the augmented matrix.
+1. Form the augmented matrix $[A | I]$, where $I$ is the identity matrix.
+2. Apply Gauss-Jordan elimination to transform $[A | I]$ into $[I | A^{-1}]$.
+3. Extract the inverse $A^{-1}$ from the augmented matrix.
 
 **Conditions**:
 
-- The matrix `A` must be square and non-singular (invertible).
+- The matrix $A$ must be square and non-singular (invertible).
 - Zero pivot elements indicate a singular matrix that cannot be inverted.
