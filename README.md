@@ -5,7 +5,7 @@
 </head>
 <body>
 
- <h1>Runge-Kutta Metho for Solving Differential Equations</h1>
+ <h1>Runge-Kutta Method for Solving Differential Equations</h1>
 
     <h2>Overview</h2>
     <p>This code uses the Runge-Kutta 4th-order method (RK4) to approximate the solution of differential equations <code>dy/dx = f(x, y)</code>. The function allows choosing between polynomial, sine, and cosine functions as input for <code>f(x, y)</code>.</p>

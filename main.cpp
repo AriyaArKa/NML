@@ -28,7 +28,7 @@ double cosineFunction(double x, double a, double b)
 {
     return a * cos(b * x);
 }
-
+*/
 int main()
 {
     double x, y, h;
@@ -101,7 +101,7 @@ int main()
         cout << "(" << x << ", " << y << ")" << endl;
     }
 }
-*/
+
 
 // Function to evaluate polynomial at a given x using Horner's method
 double f(const vector<double> &coef, double x)
