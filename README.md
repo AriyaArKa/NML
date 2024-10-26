@@ -1,92 +1,228 @@
-# NML-ASSIGNMENT
+# Numerical Methods Console Application
 
+This is a console-based application written in C++ that implements various numerical methods for solving linear equations, non-linear equations, differential equations, and performing matrix operations. The application provides an interactive menu-driven interface, allowing users to select the type of problem they wish to solve and choose from multiple algorithms available for that problem category.
 
-<h1>Gaussian and Gauss-Jordan Elimination Methods</h1>
-</head>
-<body>
+## Table of Contents
 
- <h1>Runge-Kutta Method for Solving Differential Equations</h1>
+- [Features](#features)
+- [Algorithms Implemented](#algorithms-implemented)
+  - [Linear Equations Solving Methods](#linear-equations-solving-methods)
+    - [Jacobi Method](#jacobi-method)
+    - [Gauss-Seidel Method](#gauss-seidel-method)
+    - [Gauss Elimination](#gauss-elimination)
+    - [Gauss-Jordan Elimination](#gauss-jordan-elimination)
+    - [LU Factorization](#lu-factorization)
+  - [Non-linear Equations Solving Methods](#non-linear-equations-solving-methods)
+    - [Bisection Method](#bisection-method)
+    - [False Position Method](#false-position-method)
+    - [Secant Method](#secant-method)
+    - [Newton-Raphson Method](#newton-raphson-method)
+  - [Differential Equations Solving Methods](#differential-equations-solving-methods)
+    - [Runge-Kutta Method (Fourth Order)](#runge-kutta-method-fourth-order)
+  - [Matrix Operations](#matrix-operations)
+    - [Matrix Inversion using Gauss-Jordan Elimination](#matrix-inversion-using-gauss-jordan-elimination)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Compilation and Execution](#compilation-and-execution)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
-    <h2>Overview</h2>
-    <p>This code uses the Runge-Kutta 4th-order method (RK4) to approximate the solution of differential equations <code>dy/dx = f(x, y)</code>. The function allows choosing between polynomial, sine, and cosine functions as input for <code>f(x, y)</code>.</p>
+## Features
 
-    <h2>Algorithm Explanation</h2>
-    <p>The RK4 method estimates the next point in the solution by combining the current point and four calculated increments:</p>
-    <ul>
-        <li><code>k1</code>: Slope at the beginning of the interval.</li>
-        <li><code>k2</code>: Slope at the midpoint using <code>k1</code>.</li>
-        <li><code>k3</code>: Slope at the midpoint using <code>k2</code>.</li>
-        <li><code>k4</code>: Slope at the end of the interval.</li>
-    </ul>
+- **Linear Equations Solving Methods**: Solve systems of linear equations using various iterative and direct methods.
+- **Non-linear Equations Solving Methods**: Find roots of non-linear equations using bracketing and open methods.
+- **Differential Equations Solving Methods**: Solve ordinary differential equations using the Runge-Kutta method.
+- **Matrix Operations**: Perform matrix inversion using Gauss-Jordan elimination.
+- **User-Friendly Interface**: Menu-driven console application with clear prompts and outputs.
+- **Reusable Input**: Input data is entered once per session for linear and non-linear equations, allowing users to switch methods without re-entering data until they return to the main menu.
 
-<h1>Gaussian and Gauss-Jordan Elimination</h1>
+## Algorithms Implemented
 
-<p>This project demonstrates the use of Gaussian and Gauss-Jordan elimination methods to solve systems of linear equations. Below is a detailed explanation and pseudocode of the algorithms.</p>
+### Linear Equations Solving Methods
 
-<h2>Overview</h2>
-<p>The process involves three main steps:</p>
-<ol>
-  <li><strong>Gaussian Elimination</strong>: Converts the matrix into an upper triangular form.</li>
-  <li><strong>Gauss-Jordan Elimination</strong>: Further reduces the matrix to create a diagonal form.</li>
-  <li><strong>Row Echelon Form</strong>: Scales each row so that each pivot element is 1.</li>
-</ol>
+#### Jacobi Method
 
-<h2>Algorithm Pseudocode</h2>
+The Jacobi method is an iterative algorithm used to solve a system of linear equations. It is based on solving each equation for its own variable in terms of the other variables and iteratively updating the values until convergence.
 
-<h3>1. Gaussian Elimination</h3>
-<p>This step converts the matrix to an upper triangular form. The pseudocode:</p>
-<pre>
-for each column j from 1 to n-1:
-    for each row i from n down to j+1:
-        if element at a[i][j] is 0, skip this row
-        compute lcm = lcm(a[j][j], a[i][j])
-        set multipliers up and nic based on lcm
-        for each column k from 1 to n+1:
-            a[i][k] = (up * a[j][k]) - (nic * a[i][k])
-</pre>
+**Algorithm Steps**:
 
-<p><strong>Explanation:</strong> For each column, this finds and zeroes out elements below the diagonal to form an upper triangular matrix. The least common multiple (LCM) ensures operations are integer-based, preventing fraction results.</p>
+1. Start with an initial guess for the solution vector.
+2. For each iteration:
+   - Compute the new value for each variable using the previous iteration's values.
+   - Calculate the error between the new and old values.
+3. Repeat until the maximum error is less than the specified tolerance or the maximum number of iterations is reached.
 
-<h3>2. Gauss-Jordan Elimination</h3>
-<p>This step reduces the matrix to diagonal form by making elements above the diagonal zero. The pseudocode:</p>
-<pre>
-for each column j from n down to 2:
-    for each row i from 1 up to j-1:
-        if element at a[i][j] is 0, skip this row
-        compute lcm = lcm(a[j][j], a[i][j])
-        set multipliers nic and up based on lcm
-        for each column k from 1 to n+1:
-            a[i][k] = (nic * a[j][k]) - (up * a[i][k])
-</pre>
+**Convergence Criteria**:
 
-<p><strong>Explanation:</strong> Starting from the last column, it clears entries above each pivot (diagonal) element, forming a diagonal matrix where non-zero elements appear only on the main diagonal.</p>
+- The method converges if the matrix is diagonally dominant or symmetric positive-definite.
 
-<h3>3. Row Echelon Form</h3>
-<p>After Gauss-Jordan Elimination, this step makes each pivot element equal to 1. The pseudocode:</p>
-<pre>
-for each row i from 1 to n:
-    divide each element in row i by a[i][i]
-</pre>
+#### Gauss-Seidel Method
 
-<p><strong>Explanation:</strong> This scales each row so that each diagonal entry (pivot) becomes 1, leaving the matrix in row echelon form.</p>
+The Gauss-Seidel method is an improvement over the Jacobi method, where it uses the latest updated values within an iteration. This often results in faster convergence compared to the Jacobi method.
 
-<h2>Example Usage</h2>
-<p>Here is an example input matrix and the expected output form after performing Gaussian and Gauss-Jordan elimination:</p>
-<pre>
-Input Matrix:
-1 2 3 4 | 10
-2 3 4 5 | 20
-3 4 5 6 | 30
-4 5 6 7 | 40
+**Algorithm Steps**:
 
-Result (Row Echelon Form):
-1 0 0 0 | x1
-0 1 0 0 | x2
-0 0 1 0 | x3
-0 0 0 1 | x4
-</pre>
+1. Start with an initial guess for the solution vector.
+2. For each iteration:
+   - Update each variable sequentially using the most recent values.
+   - Compute the error between the new and old values.
+3. Repeat until convergence criteria are met.
 
-<p>The resulting matrix displays the solved values of each variable in a system of equations.</p>
+**Convergence Criteria**:
 
-</body>
-</html>
+- Similar to the Jacobi method, convergence is guaranteed if the matrix is diagonally dominant or symmetric positive-definite.
+
+#### Gauss Elimination
+
+Gauss elimination is a direct method that transforms the system of linear equations into an upper triangular matrix, making it straightforward to solve via back substitution.
+
+**Algorithm Steps**:
+
+1. **Forward Elimination**:
+   - For each pivot row, eliminate the variables below the pivot element.
+   - Use partial pivoting to improve numerical stability.
+2. **Back Substitution**:
+   - Starting from the last equation, solve for each variable.
+   - Substitute the known variables into the equations above to find the remaining variables.
+
+#### Gauss-Jordan Elimination
+
+Gauss-Jordan elimination extends Gauss elimination by transforming the matrix into a reduced row-echelon form (diagonal matrix), eliminating the need for back substitution.
+
+**Algorithm Steps**:
+
+1. **Forward Elimination**:
+   - Convert the matrix into an upper triangular matrix.
+2. **Backward Elimination**:
+   - Convert the matrix into a diagonal matrix.
+3. **Normalize Diagonal Elements**:
+   - Scale rows to make the diagonal elements equal to one.
+4. Extract the solution directly from the augmented matrix.
+
+#### LU Factorization
+
+LU factorization decomposes a matrix into a product of a lower triangular matrix (L) and an upper triangular matrix (U). This method is efficient for solving multiple systems with the same coefficient matrix but different right-hand sides.
+
+**Algorithm Steps**:
+
+1. **LU Decomposition**:
+   - Decompose matrix A into L and U such that `A = LU`.
+2. **Forward Substitution**:
+   - Solve `Ly = b` for `y`.
+3. **Backward Substitution**:
+   - Solve `Ux = y` for `x`.
+
+**Advantages**:
+
+- Efficient for solving multiple systems with the same matrix.
+- LU decomposition can be reused when the right-hand side changes.
+
+### Non-linear Equations Solving Methods
+
+#### Bisection Method
+
+The bisection method is a bracketing method that repeatedly bisects an interval and selects a subinterval in which a root must lie.
+
+**Algorithm Steps**:
+
+1. Choose an initial interval `[a, b]` where the function changes sign.
+2. Compute the midpoint `c = (a + b) / 2`.
+3. Evaluate the function at `c`.
+4. Decide the subinterval `[a, c]` or `[c, b]` where the root lies.
+5. Repeat until the interval is sufficiently small or the function value at `c` is within the tolerance.
+
+**Convergence Criteria**:
+
+- The function must be continuous on `[a, b]` and `f(a)` and `f(b)` must have opposite signs.
+
+#### False Position Method
+
+Also known as the Regula Falsi method, it improves upon the bisection method by using a secant line to estimate the root.
+
+**Algorithm Steps**:
+
+1. Choose an initial interval `[a, b]` where the function changes sign.
+2. Compute `c` using the formula:
+   \[ c = \frac{a \cdot f(b) - b \cdot f(a)}{f(b) - f(a)} \]
+3. Evaluate the function at `c`.
+4. Decide the subinterval `[a, c]` or `[c, b]` where the root lies.
+5. Repeat until convergence.
+
+#### Secant Method
+
+The secant method is an open method that uses two initial approximations and approximates the derivative by a finite difference.
+
+**Algorithm Steps**:
+
+1. Choose two initial approximations `x0` and `x1`.
+2. Compute the next approximation using:
+   \[ x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})} \]
+3. Repeat until the difference between successive approximations is within the tolerance.
+
+**Advantages**:
+
+- Faster convergence compared to bracketing methods.
+- Does not require the computation of derivatives.
+
+#### Newton-Raphson Method
+
+The Newton-Raphson method is an open method that uses the function and its derivative to find successively better approximations to the roots.
+
+**Algorithm Steps**:
+
+1. Choose an initial approximation `x0`.
+2. Compute the next approximation using:
+   \[ x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \]
+3. Repeat until convergence criteria are met.
+
+**Advantages**:
+
+- Quadratic convergence near the root.
+- Very efficient if the derivative is easily computed.
+
+**Convergence Criteria**:
+
+- The function must be differentiable in the interval.
+- The initial guess should be close to the actual root.
+
+### Differential Equations Solving Methods
+
+#### Runge-Kutta Method (Fourth Order)
+
+The Runge-Kutta method is a powerful technique for solving ordinary differential equations (ODEs) numerically.
+
+**Algorithm Steps**:
+
+1. Given an initial value problem \( y' = f(x, y) \), \( y(x_0) = y_0 \), and step size `h`.
+2. For each step:
+   - Compute the slopes:
+     - \( k_1 = h \cdot f(x_n, y_n) \)
+     - \( k_2 = h \cdot f(x_n + \frac{h}{2}, y_n + \frac{k_1}{2}) \)
+     - \( k_3 = h \cdot f(x_n + \frac{h}{2}, y_n + \frac{k_2}{2}) \)
+     - \( k_4 = h \cdot f(x_n + h, y_n + k_3) \)
+   - Update the solution:
+     - \( y_{n+1} = y_n + \frac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4) \)
+   - Increment \( x_{n+1} = x_n + h \)
+
+**Advantages**:
+
+- High accuracy with relatively small step sizes.
+- Does not require higher-order derivatives.
+
+### Matrix Operations
+
+#### Matrix Inversion using Gauss-Jordan Elimination
+
+This method computes the inverse of a matrix by augmenting it with the identity matrix and applying Gauss-Jordan elimination.
+
+**Algorithm Steps**:
+
+1. Form the augmented matrix `[A | I]`, where `I` is the identity matrix.
+2. Apply Gauss-Jordan elimination to transform `[A | I]` into `[I | A^{-1}]`.
+3. Extract the inverse `A^{-1}` from the augmented matrix.
+
+**Conditions**:
+
+- The matrix `A` must be square and non-singular (invertible).
+- Zero pivot elements indicate a singular matrix that cannot be inverted.
