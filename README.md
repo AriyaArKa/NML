@@ -5,6 +5,20 @@
 </head>
 <body>
 
+ <h1>Runge-Kutta Method for Solving Differential Equations</h1>
+
+    <h2>Overview</h2>
+    <p>This code uses the Runge-Kutta 4th-order method (RK4) to approximate the solution of differential equations <code>dy/dx = f(x, y)</code>. The function allows choosing between polynomial, sine, and cosine functions as input for <code>f(x, y)</code>.</p>
+
+    <h2>Algorithm Explanation</h2>
+    <p>The RK4 method estimates the next point in the solution by combining the current point and four calculated increments:</p>
+    <ul>
+        <li><code>k1</code>: Slope at the beginning of the interval.</li>
+        <li><code>k2</code>: Slope at the midpoint using <code>k1</code>.</li>
+        <li><code>k3</code>: Slope at the midpoint using <code>k2</code>.</li>
+        <li><code>k4</code>: Slope at the end of the interval.</li>
+    </ul>
+    
 <h1>Gaussian and Gauss-Jordan Elimination</h1>
 
 <p>This project demonstrates the use of Gaussian and Gauss-Jordan elimination methods to solve systems of linear equations. Below is a detailed explanation and pseudocode of the algorithms.</p>
