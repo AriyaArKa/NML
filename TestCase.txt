@@ -73,7 +73,7 @@ Expected Output :
 Runge-Kutta Method
 -----------------------------
 
-Test Case 7:
+Test Case 5:
 -----------------------------
 
 Input:
@@ -114,7 +114,7 @@ Step 10: x = 1.000000, y = 2.500000
 Matrix Inversion
 -----------------------------
 
-Test Case 8:
+Test Case 6:
 -----------------------------
 
 Input:
