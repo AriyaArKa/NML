@@ -4,6 +4,78 @@ typedef long long int ll;
 
 int maxIteration = 1000;
 double tolerance = 1e-6;
+
+/*
+void LU_Decomposition(vector<vector<double>> &A, vector<vector<double>> &L, vector<vector<double>> &U, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (i == j)
+                L[i][j] = 1;
+            else
+                L[i][j] = 0;
+            U[i][j] = 0;
+        }
+    }
+
+    for (int k = 0; k < n; k++)
+    {
+        for (int j = k; j < n; j++)
+        {
+            U[k][j] = A[k][j];
+            for (int s = 0; s < k; s++)
+            {
+                U[k][j] -= L[k][s] * U[s][j];
+            }
+        }
+
+        for (int i = k + 1; i < n; i++)
+        {
+            L[i][k] = A[i][k];
+            for (int s = 0; s < k; s++)
+            {
+                L[i][k] -= L[i][s] * U[s][k];
+            }
+            L[i][k] /= U[k][k];
+        }
+    }
+}
+
+vector<double> forwardSubstitution(vector<vector<double>> &L, vector<double> &b, int n)
+{
+    vector<double> y(n, 0);
+    for (int i = 0; i < n; i++)
+    {
+        y[i] = b[i];
+        for (int j = 0; j < i; j++)
+        {
+            y[i] -= L[i][j] * y[j];
+        }
+    }
+    return y;
+}
+
+vector<double> backwardSubstitution(vector<vector<double>> &U, vector<double> &y, int n)
+{
+    vector<double> x(n, 0);
+    for (int i = n - 1; i >= 0; i--)
+    {
+        x[i] = y[i];
+        for (int j = i + 1; j < n; j++)
+        {
+            x[i] -= U[i][j] * x[j];
+        }
+        x[i] /= U[i][i];
+    }
+    return x;
+}*/
+
+
+
+
+
 /*
 #include <bits/stdc++.h>
 using namespace std;
