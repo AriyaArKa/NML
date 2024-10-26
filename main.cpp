@@ -4,6 +4,68 @@ typedef long long int ll;
 
 int maxIteration = 1000;
 double tolerance = 1e-6;
+/*
+
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<double> v(3);
+
+double function_x(double x)
+{
+    return v[0] * x * x + v[1] * x + v[2];
+}
+
+void regular_falsi()
+{
+    cout << "Enter coefficients a, b, and c for the equation ax^2 + bx + c = 0: ";
+    cin >> v[0] >> v[1] >> v[2];
+
+    double x1, x2, x3;
+    cout << "Enter initial Guess (x1 and x2 such that f(x1) * f(x2) < 0): ";
+    cin >> x1 >> x2;
+
+    if (function_x(x1) * function_x(x2) > 0)
+    {
+        cout << "Invalid initial guesses. f(x1) and f(x2) should have opposite signs." << endl;
+        return;
+    }
+
+    int it = 0;
+    while (it < 50)
+    {
+        x3 = x1 - (function_x(x1) * (x2 - x1)) / (function_x(x2) - function_x(x1));
+
+        cout << "Iteration: " << it << " | x1: " << x1 << " | x2: " << x2 << " | x3 (Root estimate): " << x3 << " | f(x): " << function_x(x3) << endl;
+
+        if (fabs(function_x(x3)) < 0.00001)
+        {
+            cout << "Root found at " << it << " iterations." << endl;
+            return;
+        }
+
+        if (function_x(x1) * function_x(x3) < 0)
+        {
+            x2 = x3;
+        }
+        else
+        {
+            x1 = x3;
+        }
+
+        it++;
+    }
+
+    cout << "Did not converge within the maximum number of iterations." << endl;
+}
+
+int main()
+{
+    regular_falsi();
+    return 0;
+}*/
+
+
 
 /*
 void LU_Decomposition(vector<vector<double>> &A, vector<vector<double>> &L, vector<vector<double>> &U, int n)
