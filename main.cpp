@@ -45,7 +45,7 @@ vector<pair<double, double>> findSignChanges(const vector<double>& coef, double 
         if (f_prev * f_curr <= 0.0)
         {
             // Sign change detected or zero crossing
-            intervals.push_back({x_prev, x_curr});
+            intervals.emplace_back(x_prev, x_curr);
         }
         x_prev = x_curr;
         f_prev = f_curr;
@@ -92,7 +92,8 @@ vector<double> secantMethodAllRoots(const vector<double>& coef, int maxIter, dou
             {
                 roots.push_back(x0);
             }
-            continue; // Move to next interval
+            // Continue to check if there's another root in the interval
+            // Do not 'continue' here to allow finding multiple roots in the same interval
         }
 
         // Check if f(x1) is zero
@@ -112,51 +113,55 @@ vector<double> secantMethodAllRoots(const vector<double>& coef, int maxIter, dou
             {
                 roots.push_back(x1);
             }
-            continue; // Move to next interval
+            // Continue to check if there's another root in the interval
+            // Do not 'continue' here to allow finding multiple roots in the same interval
         }
 
-        // Apply Secant Method
-        double x_prev = x0;
-        double x_curr = x1;
-        double f_prev = f_x0;
-        double f_curr = f_x1;
-
-        int iteration = 0;
-        while (iteration < maxIter)
+        // Apply Secant Method only if neither x0 nor x1 is exactly a root
+        if (fabs(f_x0) > tolerance && fabs(f_x1) > tolerance)
         {
-            if (fabs(f_curr - f_prev) < 1e-12)
-            {
-                // Denominator too small, skip this interval
-                break;
-            }
-            double x_next = x_curr - f_curr * (x_curr - x_prev) / (f_curr - f_prev);
-            double f_next = f(coef, x_next);
+            double x_prev = x0;
+            double x_curr = x1;
+            double f_prev = f_x0;
+            double f_curr = f_x1;
 
-            if (fabs(f_next) <= tolerance || fabs(x_next - x_curr) <= tolerance)
+            int iteration = 0;
+            while (iteration < maxIter)
             {
-                // Root found
-                bool is_new_root = true;
-                for (double r : roots)
+                if (fabs(f_curr - f_prev) < 1e-12)
                 {
-                    if (fabs(r - x_next) <= tolerance)
+                    // Denominator too small, skip this interval
+                    break;
+                }
+                double x_next = x_curr - f_curr * (x_curr - x_prev) / (f_curr - f_prev);
+                double f_next = f(coef, x_next);
+
+                if (fabs(f_next) <= tolerance || fabs(x_next - x_curr) <= tolerance)
+                {
+                    // Root found
+                    bool is_new_root = true;
+                    for (double r : roots)
                     {
-                        is_new_root = false;
-                        break;
+                        if (fabs(r - x_next) <= tolerance)
+                        {
+                            is_new_root = false;
+                            break;
+                        }
                     }
+                    if (is_new_root)
+                    {
+                        roots.push_back(x_next);
+                    }
+                    break;
                 }
-                if (is_new_root)
-                {
-                    roots.push_back(x_next);
-                }
-                break;
+
+                x_prev = x_curr;
+                f_prev = f_curr;
+                x_curr = x_next;
+                f_curr = f_next;
+
+                iteration++;
             }
-
-            x_prev = x_curr;
-            f_prev = f_curr;
-            x_curr = x_next;
-            f_curr = f_next;
-
-            iteration++;
         }
     }
     return roots;
@@ -166,26 +171,29 @@ vector<double> secantMethodAllRoots(const vector<double>& coef, int maxIter, dou
 vector<double> newtonRaphsonAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step)
 {
     vector<double> roots;
-    vector<double> starting_points;
+    vector<pair<double, double>> intervals = findSignChanges(coef, start, end, step);
 
-    // Generate starting points from start to end with step
-    for (double x = start; x <= end; x += step)
+    for (auto interval : intervals)
     {
-        starting_points.push_back(x);
-    }
+        double x0 = interval.first;
+        double x1 = interval.second;
+        double f_x0 = f(coef, x0);
+        double f_x1 = f(coef, x1);
 
-    for (double x0 : starting_points)
-    {
-        double x = x0;
+        // Initial guess can be midpoint of the interval
+        double x = (x0 + x1) / 2.0;
+        double f_x = f(coef, x);
+        double f_prime_x = fPrime(coef, x);
+
         int iteration = 0;
         while (iteration < maxIter)
         {
-            double f_x = f(coef, x);
-            double f_prime_x = fPrime(coef, x);
+            f_x = f(coef, x);
+            f_prime_x = fPrime(coef, x);
 
             if (fabs(f_prime_x) < 1e-12)
             {
-                // Derivative too small, skip this starting point
+                // Derivative too small, skip this interval
                 break;
             }
 
@@ -248,7 +256,8 @@ vector<double> biSectionAllRoots(const vector<double>& coef, int maxIter, double
             {
                 roots.push_back(a);
             }
-            continue; // Move to next interval
+            // Continue to check if there's another root in the interval
+            // Do not 'continue' here to allow finding multiple roots in the same interval
         }
 
         // Check if f(b) is zero
@@ -268,51 +277,49 @@ vector<double> biSectionAllRoots(const vector<double>& coef, int maxIter, double
             {
                 roots.push_back(b);
             }
-            continue; // Move to next interval
+            // Continue to check if there's another root in the interval
+            // Do not 'continue' here to allow finding multiple roots in the same interval
         }
 
-        // Now check if f(a) and f(b) have opposite signs
-        if (f_a * f_b > 0)
+        // Apply Bisection Method only if neither a nor b is exactly a root
+        if (fabs(f_a) > tolerance && fabs(f_b) > tolerance)
         {
-            // No root in this interval
-            continue;
-        }
-
-        double c, f_c;
-        int iter;
-        for (iter = 0; iter < maxIter; ++iter)
-        {
-            c = (a + b) / 2.0;
-            f_c = f(coef, c);
-
-            if (fabs(f_c) <= tolerance || fabs(b - a) <= tolerance)
+            double c, f_c;
+            int iter;
+            for (iter = 0; iter < maxIter; ++iter)
             {
-                // Root found
-                bool is_new_root = true;
-                for (double r : roots)
+                c = (a + b) / 2.0;
+                f_c = f(coef, c);
+
+                if (fabs(f_c) <= tolerance || fabs(b - a) <= tolerance)
                 {
-                    if (fabs(r - c) <= tolerance)
+                    // Root found
+                    bool is_new_root = true;
+                    for (double r : roots)
                     {
-                        is_new_root = false;
-                        break;
+                        if (fabs(r - c) <= tolerance)
+                        {
+                            is_new_root = false;
+                            break;
+                        }
                     }
+                    if (is_new_root)
+                    {
+                        roots.push_back(c);
+                    }
+                    break;
                 }
-                if (is_new_root)
-                {
-                    roots.push_back(c);
-                }
-                break;
-            }
 
-            if (f_a * f_c < 0)
-            {
-                b = c;
-                f_b = f_c;
-            }
-            else
-            {
-                a = c;
-                f_a = f_c;
+                if (f_a * f_c < 0)
+                {
+                    b = c;
+                    f_b = f_c;
+                }
+                else
+                {
+                    a = c;
+                    f_a = f_c;
+                }
             }
         }
     }
@@ -349,7 +356,8 @@ vector<double> falsePositionAllRoots(const vector<double>& coef, int maxIter, do
             {
                 roots.push_back(a);
             }
-            continue; // Move to next interval
+            // Continue to check if there's another root in the interval
+            // Do not 'continue' here to allow finding multiple roots in the same interval
         }
 
         // Check if f(b) is zero
@@ -369,52 +377,50 @@ vector<double> falsePositionAllRoots(const vector<double>& coef, int maxIter, do
             {
                 roots.push_back(b);
             }
-            continue; // Move to next interval
+            // Continue to check if there's another root in the interval
+            // Do not 'continue' here to allow finding multiple roots in the same interval
         }
 
-        // Now check if f(a) and f(b) have opposite signs
-        if (f_a * f_b > 0)
+        // Apply False Position Method only if neither a nor b is exactly a root
+        if (fabs(f_a) > tolerance && fabs(f_b) > tolerance)
         {
-            // No root in this interval
-            continue;
-        }
-
-        double c, f_c;
-        int iter;
-        for (iter = 0; iter < maxIter; ++iter)
-        {
-            // Compute c using False Position formula
-            c = (a * f_b - b * f_a) / (f_b - f_a);
-            f_c = f(coef, c);
-
-            if (fabs(f_c) <= tolerance || fabs(b - a) <= tolerance)
+            double c, f_c;
+            int iter;
+            for (iter = 0; iter < maxIter; ++iter)
             {
-                // Root found
-                bool is_new_root = true;
-                for (double r : roots)
+                // Compute c using False Position formula
+                c = (a * f_b - b * f_a) / (f_b - f_a);
+                f_c = f(coef, c);
+
+                if (fabs(f_c) <= tolerance || fabs(b - a) <= tolerance)
                 {
-                    if (fabs(r - c) <= tolerance)
+                    // Root found
+                    bool is_new_root = true;
+                    for (double r : roots)
                     {
-                        is_new_root = false;
-                        break;
+                        if (fabs(r - c) <= tolerance)
+                        {
+                            is_new_root = false;
+                            break;
+                        }
                     }
+                    if (is_new_root)
+                    {
+                        roots.push_back(c);
+                    }
+                    break;
                 }
-                if (is_new_root)
-                {
-                    roots.push_back(c);
-                }
-                break;
-            }
 
-            if (f_a * f_c < 0)
-            {
-                b = c;
-                f_b = f_c;
-            }
-            else
-            {
-                a = c;
-                f_a = f_c;
+                if (f_a * f_c < 0)
+                {
+                    b = c;
+                    f_b = f_c;
+                }
+                else
+                {
+                    a = c;
+                    f_a = f_c;
+                }
             }
         }
     }
@@ -1201,7 +1207,7 @@ void solveNonlinear(int methodChoice, const vector<double>& coefficients)
     vector<double> roots;
     double start = -100.0;
     double end = 100.0;
-    double step = 0.5;
+    double step = 0.1; // Reduced step size from 0.5 to 0.1
 
     switch (methodChoice)
     {
