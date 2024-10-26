@@ -187,35 +187,36 @@ The Newton-Raphson method is an open method that uses the function and its deriv
 
 ### Differential Equations Solving Methods
 
-#### Runge-Kutta Method (Fourth Order)
+#### The Fourth Order Runsge-Kutta approach
 
-The Runge-Kutta method is a powerful technique for solving ordinary differential equations (ODEs) numerically.
+The fourth order Runge-Kutta method provides an efficient technique for the numerical solution of ordinary differential equations.
 
-**Algorithm Steps**:
+**Steps of the algorithm**:
 
-Given an initial value problem $y' = f(x, y)$, $y(x_0) = y_0$, and step size $h$.
+Let’s consider an initial value problem $y’ = f(x,y)$, $y(x_0) = y_0$ with step size h.
 
-For each step:
+As a result of each step of
 
-1. Compute the slopes:
+1. The slopes are computed as follows:
 
-   - $k_1 = h \cdot f(x_n, y_n)$
-   - $k_2 = h \cdot f\left(x_n + \dfrac{h}{2}, y_n + \dfrac{k_1}{2}\right)$
-   - $k_3 = h \cdot f\left(x_n + \dfrac{h}{2}, y_n + \dfrac{k_2}{2}\right)$
-   - $k_4 = h \cdot f\left(x_n + h, y_n + k_3\right)$
+   k_1 = h f(x_n , y_n ) ; 
+   k_2 = h f(x_n + h/2, y_n + k_1/2) ; 
+   k_3 = h f(x_n + h/2, y_n + k_2/2) ; 
+   k_4 = h f(x_n + h, y_n + k_3) .
 
-2. Update the solution:
+2. Solution is advanced:
 
-   $y_{n+1} = y_n + \dfrac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4)$
+   $ y\_{n+1} = y\_n + \frac{1}{6}(k\_1 + 2k\_2 + 2k\_3 + k\_4) $
 
 3. Increment:
 
-   $x_{n+1} = x_n + h$
+   $ x\_{n+1} = x\_n + h $
 
 **Advantages**:
 
-- High accuracy with relatively small step sizes.
-- Does not require higher-order derivatives.
+- Offers improved accuracy for the method while maintaining fairly small step sizes.
+- No need for any higher order derivatives.
+
 
 ### Matrix Operations
 
