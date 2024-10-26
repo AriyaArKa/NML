@@ -94,23 +94,23 @@ Gauss-Jordan elimination extends Gauss elimination by transforming the matrix in
    - Scale rows to make the diagonal elements equal to one.
 4. Extract the solution directly from the augmented matrix.
 
-#### LU Factorization
+### Introduction To LU Factorization
 
-LU factorization decomposes a matrix into a product of a lower triangular matrix ($L$) and an upper triangular matrix ($U$). This method is efficient for solving multiple systems with the same coefficient matrix but different right-hand sides.
+An LU factorization of a matrix is a representation of the matrix as a product of a lower triangular matrix (the $L$ matrix) and an upper triangular matrix (the $U$ matrix) with the pyramid shape characteristic. This technique comes in handy when we would like to solve several systems of equations with the same coefficient matrix and varying right hand sides.
 
-**Algorithm Steps**:
+**Algorithm Steps**: 
 
 1. **LU Decomposition**:
-   - Decompose matrix $A$ into $L$ and $U$ such that $A = LU$.
+   - Factorize the matrix A as L times U where A=LU.
 2. **Forward Substitution**:
-   - Solve $Ly = b$ for $y$.
-3. **Backward Substitution**:
-   - Solve $Ux = y$ for $x$.
+   - Determine y in the equation Ly=b.
+3. **Back Substitution**:
+   - Determine x in the equation Ux=y.
 
 **Advantages**:
 
-- Efficient for solving multiple systems with the same matrix.
-- LU decomposition can be reused when the right-hand side changes.
+- Solving multiple systems with an identical matrix is tremendously efficient.
+- The LU decomposition approach can be applied again especially if the right hand side is modified.
 
 ### Non-linear Equations Solving Methods
 
