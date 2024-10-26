@@ -4,241 +4,9 @@ typedef long long int ll;
 
 int maxIteration = 1000;
 double tolerance = 1e-6;
-/*
-
-#include <bits/stdc++.h>
-using namespace std;
-
-vector<double> v(3);
-
-double function_x(double x)
-{
-    return v[0] * x * x + v[1] * x + v[2];
-}
-
-void regular_falsi()
-{
-    cout << "Enter coefficients a, b, and c for the equation ax^2 + bx + c = 0: ";
-    cin >> v[0] >> v[1] >> v[2];
-
-    double x1, x2, x3;
-    cout << "Enter initial Guess (x1 and x2 such that f(x1) * f(x2) < 0): ";
-    cin >> x1 >> x2;
-
-    if (function_x(x1) * function_x(x2) > 0)
-    {
-        cout << "Invalid initial guesses. f(x1) and f(x2) should have opposite signs." << endl;
-        return;
-    }
-
-    int it = 0;
-    while (it < 50)
-    {
-        x3 = x1 - (function_x(x1) * (x2 - x1)) / (function_x(x2) - function_x(x1));
-
-        cout << "Iteration: " << it << " | x1: " << x1 << " | x2: " << x2 << " | x3 (Root estimate): " << x3 << " | f(x): " << function_x(x3) << endl;
-
-        if (fabs(function_x(x3)) < 0.00001)
-        {
-            cout << "Root found at " << it << " iterations." << endl;
-            return;
-        }
-
-        if (function_x(x1) * function_x(x3) < 0)
-        {
-            x2 = x3;
-        }
-        else
-        {
-            x1 = x3;
-        }
-
-        it++;
-    }
-
-    cout << "Did not converge within the maximum number of iterations." << endl;
-}
-
-int main()
-{
-    regular_falsi();
-    return 0;
-}*/
-
-
-
-/*
-void LU_Decomposition(vector<vector<double>> &A, vector<vector<double>> &L, vector<vector<double>> &U, int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            if (i == j)
-                L[i][j] = 1;
-            else
-                L[i][j] = 0;
-            U[i][j] = 0;
-        }
-    }
-
-    for (int k = 0; k < n; k++)
-    {
-        for (int j = k; j < n; j++)
-        {
-            U[k][j] = A[k][j];
-            for (int s = 0; s < k; s++)
-            {
-                U[k][j] -= L[k][s] * U[s][j];
-            }
-        }
-
-        for (int i = k + 1; i < n; i++)
-        {
-            L[i][k] = A[i][k];
-            for (int s = 0; s < k; s++)
-            {
-                L[i][k] -= L[i][s] * U[s][k];
-            }
-            L[i][k] /= U[k][k];
-        }
-    }
-}
-
-vector<double> forwardSubstitution(vector<vector<double>> &L, vector<double> &b, int n)
-{
-    vector<double> y(n, 0);
-    for (int i = 0; i < n; i++)
-    {
-        y[i] = b[i];
-        for (int j = 0; j < i; j++)
-        {
-            y[i] -= L[i][j] * y[j];
-        }
-    }
-    return y;
-}
-
-vector<double> backwardSubstitution(vector<vector<double>> &U, vector<double> &y, int n)
-{
-    vector<double> x(n, 0);
-    for (int i = n - 1; i >= 0; i--)
-    {
-        x[i] = y[i];
-        for (int j = i + 1; j < n; j++)
-        {
-            x[i] -= U[i][j] * x[j];
-        }
-        x[i] /= U[i][i];
-    }
-    return x;
-}*/
-
-
-
-
-
-/*
-#include <bits/stdc++.h>
-using namespace std;
-
-double polynomialFunction(double x, vector<double> &coefficients)
-{
-    double result = 0;
-    int degree = coefficients.size() - 1;
-    for (int i = 0; i <= degree; i++)
-    {
-        result += coefficients[i] * pow(x, degree - i);
-    }
-    return result;
-}
-
-double sineFunction(double x, double a, double b)
-{
-    return a * sin(b * x);
-}
-
-double cosineFunction(double x, double a, double b)
-{
-    return a * cos(b * x);
-}
-*/
-int main()
-{
-    double x, y, h;
-    int steps, choice;
-
-    cout << "Choose a function type for dy/dx:\n";
-    cout << "1. Polynomial (ax^2 + bx + c)\n";
-    cout << "2. Trigonometric Cosine (a * cos(b * x))\n";
-    cout << "3. Trigonometric Sine (a * sin(b * x))\n";
-    cout << "Enter your choice (1/2/3): ";
-    cin >> choice;
-
-    vector<double> coefficients;
-    double a, b;
-    if (choice == 1)
-    {
-        int degree;
-        cout << "Enter the degree of the polynomial: ";
-        cin >> degree;
-        coefficients.resize(degree + 1);
-        cout << "Enter the coefficients (highest degree first):\n";
-        for (int i = 0; i <= degree; i++)
-        {
-            cout << "Coefficient of x^" << (degree - i) << ": ";
-            cin >> coefficients[i];
-        }
-    }
-    else if (choice == 2 || choice == 3)
-    {
-        cout << "Enter the value of a (amplitude): ";
-        cin >> a;
-        cout << "Enter the value of b (frequency multiplier): ";
-        cin >> b;
-    }
-    else
-    {
-        cout << "Invalid choice. Exiting program." << endl;
-        return 1;
-    }
-
-    cout << "Enter initial value of x: ";
-    cin >> x;
-    cout << "Enter initial value of y: ";
-    cin >> y;
-    cout << "Enter step size (h): ";
-    cin >> h;
-    cout << "Enter number of steps: ";
-    cin >> steps;
-
-    auto f = [&](double x, double y)
-    {
-        if (choice == 1)
-            return polynomialFunction(x, coefficients);
-        else if (choice == 2)
-            return cosineFunction(x, a, b);
-        else
-            return sineFunction(x, a, b);
-    };
-
-    for (int i = 0; i < steps; i++)
-    {
-        double k1 = h * f(x, y);
-        double k2 = h * f(x + h / 2, y + k1 / 2);
-        double k3 = h * f(x + h / 2, y + k2 / 2);
-        double k4 = h * f(x + h, y + k3);
-
-        y += (1.0 / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
-        x += h;
-
-        cout << "(" << x << ", " << y << ")" << endl;
-    }
-}
-
 
 // Function to evaluate polynomial at a given x using Horner's method
-double f(const vector<double> &coef, double x)
+double f(const vector<double>& coef, double x)
 {
     double result = coef[0];
     int n = coef.size();
@@ -250,7 +18,7 @@ double f(const vector<double> &coef, double x)
 }
 
 // Function to evaluate derivative of polynomial at a given x using Horner's method
-double fPrime(const vector<double> &coef, double x)
+double fPrime(const vector<double>& coef, double x)
 {
     int n = coef.size();
     if (n <= 1)
@@ -264,7 +32,7 @@ double fPrime(const vector<double> &coef, double x)
 }
 
 // Function to find intervals where the function changes sign or touches zero
-vector<pair<double, double>> findSignChanges(const vector<double> &coef, double start, double end, double step)
+vector<pair<double, double>> findSignChanges(const vector<double>& coef, double start, double end, double step)
 {
     vector<pair<double, double>> intervals;
     double x_prev = start;
@@ -286,7 +54,7 @@ vector<pair<double, double>> findSignChanges(const vector<double> &coef, double 
 }
 
 // Function to remove duplicates and sort roots
-void removeDuplicatesAndSort(vector<double> &roots, double tolerance)
+void removeDuplicatesAndSort(vector<double>& roots, double tolerance)
 {
     sort(roots.begin(), roots.end());
     roots.erase(unique(roots.begin(), roots.end(), [tolerance](double a, double b)
@@ -295,7 +63,7 @@ void removeDuplicatesAndSort(vector<double> &roots, double tolerance)
 }
 
 // Secant Method to find all real roots
-vector<double> secantMethodAllRoots(const vector<double> &coef, int maxIter, double tolerance, double start, double end, double step)
+vector<double> secantMethodAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step)
 {
     vector<double> roots;
     vector<pair<double, double>> intervals = findSignChanges(coef, start, end, step);
@@ -395,7 +163,7 @@ vector<double> secantMethodAllRoots(const vector<double> &coef, int maxIter, dou
 }
 
 // Newton-Raphson method to find all real roots
-vector<double> newtonRaphsonAllRoots(const vector<double> &coef, int maxIter, double tolerance, double start, double end, double step)
+vector<double> newtonRaphsonAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step)
 {
     vector<double> roots;
     vector<double> starting_points;
@@ -450,7 +218,7 @@ vector<double> newtonRaphsonAllRoots(const vector<double> &coef, int maxIter, do
 }
 
 // Bisection method to find all real roots
-vector<double> biSectionAllRoots(const vector<double> &coef, int maxIter, double tolerance, double start, double end, double step)
+vector<double> biSectionAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step)
 {
     vector<double> roots;
     vector<pair<double, double>> intervals = findSignChanges(coef, start, end, step);
@@ -552,7 +320,7 @@ vector<double> biSectionAllRoots(const vector<double> &coef, int maxIter, double
 }
 
 // False Position method to find all real roots
-vector<double> falsePositionAllRoots(const vector<double> &coef, int maxIter, double tolerance, double start, double end, double step)
+vector<double> falsePositionAllRoots(const vector<double>& coef, int maxIter, double tolerance, double start, double end, double step)
 {
     vector<double> roots;
     vector<pair<double, double>> intervals = findSignChanges(coef, start, end, step);
@@ -654,7 +422,7 @@ vector<double> falsePositionAllRoots(const vector<double> &coef, int maxIter, do
 }
 
 // Jacobi Method Function
-vector<double> jacobiMethod(const vector<vector<double>> &A, const vector<double> &b, const vector<double> &initialGuess = {})
+vector<double> jacobiMethod(const vector<vector<double>>& A, const vector<double>& b, const vector<double>& initialGuess = {})
 {
     int n = b.size();
     vector<double> xOld(n, 0.0);
@@ -690,7 +458,6 @@ vector<double> jacobiMethod(const vector<vector<double>> &A, const vector<double
         double maxError = *max_element(errors.begin(), errors.end());
         if (maxError < tolerance)
         {
-            // cout << "Jacobi method converged in " << iter + 1 << " iterations." << endl;
             return xNew;
         }
         xOld = xNew;
@@ -701,7 +468,7 @@ vector<double> jacobiMethod(const vector<vector<double>> &A, const vector<double
 }
 
 // Gauss-Seidel Method Function
-vector<double> gaussSeidelMethod(const vector<vector<double>> &A, const vector<double> &b, const vector<double> &initialGuess = {})
+vector<double> gaussSeidelMethod(const vector<vector<double>>& A, const vector<double>& b, const vector<double>& initialGuess = {})
 {
     int n = b.size();
     vector<double> x(n, 0.0);
@@ -739,7 +506,6 @@ vector<double> gaussSeidelMethod(const vector<vector<double>> &A, const vector<d
         double maxError = *max_element(errors.begin(), errors.end());
         if (maxError < tolerance)
         {
-            // cout << "Gauss-Seidel method converged in " << iter + 1 << " iterations." << endl;
             return x;
         }
     }
@@ -857,7 +623,7 @@ vector<double> gaussJordanElimination(vector<vector<double>> matrix)
 }
 
 // LU Decomposition Function
-bool luDecomposition(const vector<vector<double>> &A, vector<vector<double>> &L, vector<vector<double>> &U)
+bool luDecomposition(const vector<vector<double>>& A, vector<vector<double>>& L, vector<vector<double>>& U)
 {
     int n = A.size();
     L.assign(n, vector<double>(n, 0.0));
@@ -897,7 +663,7 @@ bool luDecomposition(const vector<vector<double>> &A, vector<vector<double>> &L,
 }
 
 // Forward Substitution
-vector<double> forwardSubstitution(const vector<vector<double>> &L, const vector<double> &b)
+vector<double> forwardSubstitution(const vector<vector<double>>& L, const vector<double>& b)
 {
     int n = L.size();
     vector<double> y(n);
@@ -912,7 +678,7 @@ vector<double> forwardSubstitution(const vector<vector<double>> &L, const vector
 }
 
 // Backward Substitution
-vector<double> backwardSubstitution(const vector<vector<double>> &U, const vector<double> &y)
+vector<double> backwardSubstitution(const vector<vector<double>>& U, const vector<double>& y)
 {
     int n = U.size();
     vector<double> x(n);
@@ -932,7 +698,7 @@ vector<double> backwardSubstitution(const vector<vector<double>> &U, const vecto
 }
 
 // LU Factorization method
-vector<double> luFactorization(const vector<vector<double>> &A, const vector<double> &b)
+vector<double> luFactorization(const vector<vector<double>>& A, const vector<double>& b)
 {
     vector<vector<double>> L, U;
     if (!luDecomposition(A, L, U))
@@ -946,7 +712,7 @@ vector<double> luFactorization(const vector<vector<double>> &A, const vector<dou
 }
 
 // Matrix Inversion using Gauss-Jordan Elimination
-bool invertMatrix(const vector<vector<double>> &A, vector<vector<double>> &inverse)
+bool invertMatrix(const vector<vector<double>>& A, vector<vector<double>>& inverse)
 {
     int n = A.size();
     vector<vector<double>> augmentedMatrix(n, vector<double>(2 * n));
@@ -978,7 +744,6 @@ bool invertMatrix(const vector<vector<double>> &A, vector<vector<double>> &inver
         double pivot = augmentedMatrix[j][j];
         if (fabs(pivot) < 1e-12)
         {
-            // cout << "Matrix is singular and cannot be inverted." << endl;
             return false;
         }
         for (int k = 0; k < 2 * n; ++k)
@@ -1048,14 +813,106 @@ void matrixInversion()
     }
 }
 
-// Placeholder for Runge-Kutta Method (4th Order)
+// Function definitions for polynomialFunction, sineFunction, cosineFunction
+double polynomialFunction(double x, const vector<double>& coefficients)
+{
+    double result = 0;
+    int degree = coefficients.size() - 1;
+    for (int i = 0; i <= degree; i++)
+    {
+        result += coefficients[i] * pow(x, degree - i);
+    }
+    return result;
+}
+
+double sineFunction(double x, double a, double b)
+{
+    return a * sin(b * x);
+}
+
+double cosineFunction(double x, double a, double b)
+{
+    return a * cos(b * x);
+}
+
+// Runge-Kutta Method (4th Order)
 void rungeKuttaMethod()
 {
-    cout << "Runge-Kutta Method (4th Order) is not yet implemented." << endl;
+    double x, y, h;
+    int steps, choice;
+
+    cout << "Choose a function type for dy/dx:\n";
+    cout << "1. Polynomial (ax^n + ... + c)\n";
+    cout << "2. Trigonometric Cosine (a * cos(b * x))\n";
+    cout << "3. Trigonometric Sine (a * sin(b * x))\n";
+    cout << "Enter your choice (1/2/3): ";
+    cin >> choice;
+
+    vector<double> coefficients;
+    double a, b_param;
+    if (choice == 1)
+    {
+        int degree;
+        cout << "Enter the degree of the polynomial: ";
+        cin >> degree;
+        coefficients.resize(degree + 1);
+        cout << "Enter the coefficients (highest degree first):\n";
+        for (int i = 0; i <= degree; i++)
+        {
+            cout << "Coefficient of x^" << (degree - i) << ": ";
+            cin >> coefficients[i];
+        }
+    }
+    else if (choice == 2 || choice == 3)
+    {
+        cout << "Enter the value of a (amplitude): ";
+        cin >> a;
+        cout << "Enter the value of b (frequency multiplier): ";
+        cin >> b_param;
+    }
+    else
+    {
+        cout << "Invalid choice. Exiting program." << endl;
+        return;
+    }
+
+    cout << "Enter initial value of x: ";
+    cin >> x;
+    cout << "Enter initial value of y: ";
+    cin >> y;
+    cout << "Enter step size (h): ";
+    cin >> h;
+    cout << "Enter number of steps: ";
+    cin >> steps;
+
+    auto f = [&](double x_val, double y_val)
+    {
+        if (choice == 1)
+            return polynomialFunction(x_val, coefficients);
+        else if (choice == 2)
+            return cosineFunction(x_val, a, b_param);
+        else
+            return sineFunction(x_val, a, b_param);
+    };
+
+    cout << "\nResults using Runge-Kutta Method (4th Order):\n";
+    cout << fixed << setprecision(6);
+    for (int i = 0; i < steps; i++)
+    {
+        double k1 = h * f(x, y);
+        double k2 = h * f(x + h / 2, y + k1 / 2);
+        double k3 = h * f(x + h / 2, y + k2 / 2);
+        double k4 = h * f(x + h, y + k3);
+
+        y += (1.0 / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+        x += h;
+
+        cout << "Step " << i + 1 << ": x = " << x << ", y = " << y << endl;
+    }
 }
 
 // Function to take input for linear equations
-void takeInputForLinear(vector<vector<double>> &A, vector<double> &b)
+void takeInputForLinear(vector<vector<double>>& A, vector<double>& b)
 {
     int n;
     cout << "Enter the number of equations: ";
@@ -1071,7 +928,6 @@ void takeInputForLinear(vector<vector<double>> &A, vector<double> &b)
 
     for (int i = 0; i < n; ++i)
     {
-        // No extra print statements between inputs
         for (int j = 0; j < n + 1; ++j)
         {
             cin >> augmentedMatrix[i][j];
@@ -1090,7 +946,7 @@ void takeInputForLinear(vector<vector<double>> &A, vector<double> &b)
 }
 
 // Function to take input for polynomials
-void takeInputForPolynomial(vector<double> &coefficients)
+void takeInputForPolynomial(vector<double>& coefficients)
 {
     int degree;
     cout << "Enter the degree of the polynomial: ";
@@ -1144,7 +1000,7 @@ void nonlinearMenu()
 void diffEqMenu()
 {
     cout << "\nSelect a differential equation solving method:\n";
-    cout << "1. Runge-Kutta Method (4th Order)\n";
+    cout << "1. Runge-Kutta Method\n";
     cout << "0. Return to Main Menu\n";
     cout << "Enter your choice: ";
 }
